@@ -1,0 +1,2 @@
+.vault_passwd filter=git-crypt diff=git-crypt
+vaulted_vars/** filter=git-crypt diff=git-crypt
