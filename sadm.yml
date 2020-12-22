@@ -1,0 +1,9 @@
+---
+
+# This is the main playbook for our infrastructure
+- name: Deploy whole infrastructure
+  hosts: server
+  gather_facts: false
+  roles:
+  - role: setup_sshd
+  - role: install_docker

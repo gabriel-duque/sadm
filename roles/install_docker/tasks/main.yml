@@ -1,0 +1,56 @@
+---
+
+- name: Update host packages
+  apt:
+    upgrade: dist
+    update_cache: yes
+
+- name: Install dependencies
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    state: latest
+
+- name: Add Docker's GPG apt key
+  apt_key:
+    url: '{{ docker_apt_key_url }}'
+    state: present
+
+- name: Get Ubuntu version's short codename
+  command: lsb_release -cs
+  register: ubuntu_codename
+  changed_when: false
+    
+- name: Add Docker repository
+  apt_repository:
+    repo: 'deb [arch={{ node_arch }}] {{ docker_repo_url }} {{ ubuntu_codename.stdout }} stable'
+
+- name: Install Docker
+  apt:
+    update_cache: yes
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: latest
+
+- name: Cleanup package cache and remove unused packages
+  apt:
+    autoclean: yes
+    autoremove: yes
+
+- name: Install Docker API Python bindings
+  pip:
+    name:
+      - docker
+    state: latest
+
+- name: Start Docker service
+  systemd:
+    name: docker.socket
+    state: started
+    enabled: yes
