@@ -1,0 +1,28 @@
+---
+
+- name: Create directories for generated files
+  file:
+    path: '{{ base_dir }}{{ generated_dir }}{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(volumes.default.owner, true) }}'
+    group: '{{ item.group | default(volumes.default.group, true) }}'
+    mode: '{{ item.mode | default(volumes.default.mode, true) }}'
+  loop: '{{ volumes.generated }}'
+
+- name: Create directories for persistent files
+  file:
+    path: '{{ base_dir }}{{ persistent_dir }}{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(volumes.default.owner, true) }}'
+    group: '{{ item.group | default(volumes.default.group, true) }}'
+    mode: '{{ item.mode | default(volumes.default.mode, true) }}'
+  loop: '{{ volumes.persistent }}'
+
+- name: Create directories for volatile files
+  file:
+    path: '{{ base_dir }}{{ volatile_dir }}{{ item.path }}'
+    state: directory
+    owner: '{{ item.owner | default(volumes.default.owner, true) }}'
+    group: '{{ item.group | default(volumes.default.group, true) }}'
+    mode: '{{ item.mode | default(volumes.default.mode, true) }}'
+  loop: '{{ volumes.volatile }}'

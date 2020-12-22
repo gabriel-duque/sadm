@@ -7,3 +7,4 @@
   roles:
   - role: setup_sshd
   - role: install_docker
+  - role: create_directories

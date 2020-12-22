@@ -5,3 +5,39 @@
 docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
 docker_repo_url: 'https://download.docker.com/linux/ubuntu'
 node_arch: 'amd64'
+
+base_dir: '/sadm'
+generated_dir: '/generated'
+persistent_dir: '/persistent'
+volatile_dir: '/volatile'
+volumes:
+  default:
+    owner: 'root'
+    group: 'root'
+    mode: '0700'
+
+  generated:
+    # For Traefik
+    - path: '/traefik/config/static'
+    - path: '/traefik/config/dynamic'
+
+  persistent:
+    # For Traefik
+    - path: '/traefik/data'
+
+    # For Gitlab server
+    - path: '/gitlab/config'
+    - path: '/gitlab/log'
+    - path: '/gitlab/data'
+
+    # For Gitlab runner
+    - path: '/gitlab-runner/config'
+
+  volatile:
+    # For transfer.sh
+    - path: '/files/data'
+
+    # For Privatebin
+    - path: '/paste/data'
+      owner: '65534'
+      group: '82'
