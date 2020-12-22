@@ -1,0 +1,9 @@
+---
+
+- name: Create Docker networks
+  community.general.docker_network:
+    attachable: true
+    scope: local
+    name: '{{ item }}'
+    appends: true
+  loop: '{{ networks }}'

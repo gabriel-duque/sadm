@@ -1,0 +1,63 @@
+---
+
+- name: Generate Traefik's static configuration
+  template:
+    src: 'static.toml.j2'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/static/traefik.toml'
+    mode: '0444'
+
+- name: Generate Traefik's dynamic configuration
+  template:
+    src: 'dynamic.toml.j2'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/traefik.toml'
+    mode: '0444'
+
+- name: Copy generic configuration files
+  copy:
+    src: '{{ item.name }}'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/{{ item.name }}'
+    mode: '0444'
+  loop:
+    - { name: 'security_headers.toml' }
+    - { name: 'tls.toml' }
+
+- name: Start Traefik container
+  community.general.docker_container:
+    cap_drop:
+      - all
+    capabilities:
+      - net_bind_service
+    command:
+      - '--configFile={{ volumes.prefix }}/traefik/static/traefik.toml'
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ containers.traefik.name }}'
+    image: '{{ containers.traefik.image }}'
+    mounts:
+    - type: bind
+      source: '{{ base_dir }}{{ generated_dir }}/traefik/static'
+      target: '{{ volumes.prefix }}/traefik/static'
+      read_only: true
+    - type: bind
+      source: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic'
+      target: '{{ volumes.prefix }}/traefik/dynamic'
+      read_only: true
+    - type: bind
+      source: '{{ base_dir }}{{ persistent_dir }}/traefik/data'
+      target: '{{ volumes.prefix }}/traefik/data'
+      read_only: false
+    - type: bind
+      source: '/var/run/docker.sock'
+      target: '/var/run/docker.sock'
+    name: '{{ containers.traefik.name }}'
+    networks:
+      - name: '{{ default_network }}'
+        aliases:
+          - '{{ containers.traefik.name }}'
+    networks_cli_compatible: false
+    published_ports:
+      - '22:22'
+      - '80:80'
+      - '443:443'
+    pull: true
+    restart_policy: unless-stopped

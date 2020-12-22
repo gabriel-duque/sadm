@@ -1,0 +1,12 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.security_headers]
+      [http.middlewares.security_headers.headers]
+        frameDeny = true
+        sslRedirect = true
+        browserXssFilter = true
+        contentTypeNosniff = true
+
+        stsIncludeSubdomains = true
+        stsPreload = true
+        stsSeconds = 31536000

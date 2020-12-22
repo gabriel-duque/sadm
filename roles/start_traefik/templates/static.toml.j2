@@ -1,0 +1,37 @@
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = false
+
+[accesslog]
+  filePath = "{{ volumes.prefix }}/traefik/data/access.log"
+  bufferingSize = 100
+
+[api]
+  dashboard = true
+  debug = false
+
+[providers]
+  [providers.file]
+    directory = "{{ volumes.prefix }}/traefik/dynamic"
+    watch = true
+
+[certificatesResolvers]
+  [certificatesResolvers.sadm_tlschallenge]
+    [certificatesResolvers.sadm_tlschallenge.acme]
+      email = "{{ admin_email }}"
+      storage = "{{ volumes.prefix }}/traefik/data/acme.json"
+      keyType = "EC384"
+    [certificatesResolvers.sadm_tlschallenge.acme.tlsChallenge]
+
+[entryPoints]
+  [entryPoints.https]
+    address = ":443"
+  [entryPoints.http]
+    address = ":80"
+    [entryPoints.http.http.redirections]
+      [entryPoints.http.http.redirections.entryPoint]
+        to = ":443"
+        scheme = "https"
+        permanent = true
+  [entryPoints.tcp_22]
+    address = ":22"

@@ -1,0 +1,16 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.traefik_auth]
+      [http.middlewares.traefik_auth.basicAuth]
+        users = "{{ secrets.basic_auth.traefik }}" 
+  [http.routers]
+    [http.routers.traefik_https]
+      rule = "Host(`traefik.{{ tld }}`)"
+      entryPoints = "https"
+      service = "api@internal"
+      middlewares = [
+        "security_headers",
+        "traefik_auth"
+      ]
+      [http.routers.traefik_https.tls]
+        certResolver = "sadm_tlschallenge"

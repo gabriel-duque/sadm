@@ -7,13 +7,20 @@ docker_repo_url: 'https://download.docker.com/linux/ubuntu'
 node_arch: 'amd64'
 
 tld: 'zuh0.com'
+admin_email: 'gabriel@zuh0.com'
+default_network: 'sadm-net'
 networks:
   - 'sadm-net'
+containers:
+  traefik:
+    name: 'traefik'
+    image: 'docker.io/traefik:latest'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'
 volatile_dir: '/volatile'
 volumes:
+  prefix: '/docker-volume'
   default:
     owner: 'root'
     group: 'root'
@@ -21,8 +28,8 @@ volumes:
 
   generated:
     # For Traefik
-    - path: '/traefik/config/static'
-    - path: '/traefik/config/dynamic'
+    - path: '/traefik/static'
+    - path: '/traefik/dynamic'
 
   persistent:
     # For Traefik
