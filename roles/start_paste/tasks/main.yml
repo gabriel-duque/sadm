@@ -1,0 +1,34 @@
+---
+
+- name: Generate paste's dynamic configuration for Traefik
+  template:
+    src: 'paste.toml.j2'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/paste.toml'
+    mode: '0444'
+
+- name: Start privatebin container
+  community.general.docker_container:
+    cap_drop:
+      - all
+    container_default_behavior: 'no_defaults'
+    detach: true
+    env:
+      TZ: 'Europe/Paris'
+      PHP_TZ: 'Europe/Paris'
+    hostname: '{{ containers.paste.name }}'
+    image: '{{ containers.paste.image }}'
+    mounts:
+    - type: bind
+      source: '{{ base_dir }}{{ volatile_dir }}/paste/data'
+      target: '/srv/data'
+      read_only: false
+    name: '{{ containers.paste.name }}'
+    networks:
+      - name: '{{ default_network }}'
+        aliases:
+          - '{{ containers.paste.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    read_only: true
+    restart_policy: unless-stopped

@@ -18,6 +18,9 @@ containers:
   files:
     name: 'files'
     image: 'docker.io/dutchcoders/transfer.sh:latest'
+  paste:
+    name: 'paste'
+    image: 'docker.io/privatebin/nginx-fpm-alpine:latest'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'

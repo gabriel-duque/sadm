@@ -13,3 +13,4 @@
   - role: create_networks
   - role: start_traefik
   - role: start_files
+  - role: start_paste
