@@ -4,4 +4,4 @@
   systemd:
     name: sshd
     state: restarted
-    enabled: yes
+    enabled: true

@@ -3,7 +3,7 @@
 - name: Update host packages
   apt:
     upgrade: dist
-    update_cache: yes
+    update_cache: true
 
 - name: Install dependencies
   apt:
@@ -24,14 +24,18 @@
   command: lsb_release -cs
   register: ubuntu_codename
   changed_when: false
-    
+
 - name: Add Docker repository
   apt_repository:
-    repo: 'deb [arch={{ node_arch }}] {{ docker_repo_url }} {{ ubuntu_codename.stdout }} stable'
+    repo: >-
+      deb [arch={{ node_arch }}]
+      {{ docker_repo_url }}
+      {{ ubuntu_codename.stdout }}
+      stable
 
 - name: Install Docker
   apt:
-    update_cache: yes
+    update_cache: true
     pkg:
       - docker-ce
       - docker-ce-cli
@@ -40,8 +44,8 @@
 
 - name: Cleanup package cache and remove unused packages
   apt:
-    autoclean: yes
-    autoremove: yes
+    autoclean: true
+    autoremove: true
 
 - name: Install Docker API Python bindings
   pip:
@@ -53,4 +57,4 @@
   systemd:
     name: docker.socket
     state: started
-    enabled: yes
+    enabled: true
