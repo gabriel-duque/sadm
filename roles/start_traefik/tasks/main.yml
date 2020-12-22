@@ -5,6 +5,7 @@
     src: 'static.toml.j2'
     dest: '{{ base_dir }}{{ generated_dir }}/traefik/static/traefik.toml'
     mode: '0444'
+  notify: Restart Traefik container
 
 - name: Generate Traefik's dynamic configuration
   template:
@@ -12,7 +13,7 @@
     dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/traefik.toml'
     mode: '0444'
 
-- name: Copy generic configuration files
+- name: Copy Traefik's generic dynamic configuration files
   copy:
     src: '{{ item.name }}'
     dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/{{ item.name }}'
@@ -60,4 +61,5 @@
       - '80:80'
       - '443:443'
     pull: true
+    purge_networks: true
     restart_policy: unless-stopped
