@@ -1,0 +1,33 @@
+---
+
+- name: Generate files's dynamic configuration for Traefik
+  template:
+    src: 'files.toml.j2'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/files.toml'
+    mode: '0444'
+
+- name: Start transfer.sh container
+  community.general.docker_container:
+    cap_drop:
+      - all
+    command:
+      - '--provider=local'
+      - '--basedir={{ volumes.prefix }}'
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ containers.files.name }}'
+    image: '{{ containers.files.image }}'
+    mounts:
+    - type: bind
+      source: '{{ base_dir }}{{ volatile_dir }}/files/data'
+      target: '{{ volumes.prefix }}'
+      read_only: false
+    name: '{{ containers.files.name }}'
+    networks:
+      - name: '{{ default_network }}'
+        aliases:
+          - '{{ containers.files.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped

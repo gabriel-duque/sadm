@@ -15,6 +15,9 @@ containers:
   traefik:
     name: 'traefik'
     image: 'docker.io/traefik:latest'
+  files:
+    name: 'files'
+    image: 'docker.io/dutchcoders/transfer.sh:latest'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'

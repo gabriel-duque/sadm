@@ -12,3 +12,4 @@
   - role: create_directories
   - role: create_networks
   - role: start_traefik
+  - role: start_files
