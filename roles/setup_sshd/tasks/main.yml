@@ -1,0 +1,73 @@
+---
+
+- name: Test the configured SSH port
+  wait_for:
+    port: '{{ ansible_port }}'
+    state: 'started'
+    host: '{{ ansible_host }}'
+    connect_timeout: '5'
+    timeout: '1'
+  delegate_to: 'localhost'
+  ignore_errors: 'yes'
+  register: configured_ssh
+
+- name: Test default SSH port
+  wait_for:
+    port: '22'
+    state: 'started'
+    host: '{{ ansible_host }}'
+    connect_timeout: '5'
+    timeout: '1'
+  delegate_to: 'localhost'
+  ignore_errors: 'yes'
+  register: default_ssh
+  when: configured_ssh is failed
+
+- name: Fail if both SSH ports were closed
+  fail:
+    msg: 'Neither 22 or {{ ansible_port }} are open for SSH connections'
+  when: configured_ssh is failed and default_ssh is failed
+
+- name: Save configured port
+  set_fact:
+    configured_port: '{{ ansible_port }}'
+
+- name: Set Ansible port to 22
+  set_fact:
+    ansible_port: '22'
+  when: configured_ssh is failed
+
+- name: Set port for SSH daemon
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[#\s]*Port'
+    line: 'Port {{ configured_port }}'
+  notify: Restart SSH daemon
+
+- name: Disallow password authentication for 'root'
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[#\s]*PermitRootLogin'
+    line: 'PermitRootLogin prohibit-password'
+  notify: Restart SSH daemon
+
+- name: Disallow password authentication for all users
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^[#\s]*PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+  notify: Restart SSH daemon
+
+- name: Flush handlers to restart SSH daemon
+  meta: flush_handlers
+
+- name: Reset Ansible port to configured value
+  set_fact:
+    ansible_port: '{{ configured_port }}'
+  when: configured_ssh is failed
+
+- name: Confirm host connection works
+  ping:
+
+- name: Run deferred setup to gather facts
+  setup:
