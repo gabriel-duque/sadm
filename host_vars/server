@@ -6,6 +6,9 @@ docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
 docker_repo_url: 'https://download.docker.com/linux/ubuntu'
 node_arch: 'amd64'
 
+tld: 'zuh0.com'
+networks:
+  - 'sadm-net'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'
