@@ -12,6 +12,7 @@
       - ca-certificates
       - curl
       - gnupg-agent
+      - python3-pip
       - software-properties-common
     state: latest
 
