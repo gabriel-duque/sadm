@@ -1,0 +1,7 @@
+---
+
+# This file holds all the cleartext variables for our infrastructure
+
+docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
+docker_repo_url: 'https://download.docker.com/linux/ubuntu'
+node_arch: 'amd64'

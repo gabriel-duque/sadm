@@ -1,1 +1,1 @@
-zuh0.com ansible_port=222
+server ansible_user=root ansible_port=222 ansible_host=zuh0.com
