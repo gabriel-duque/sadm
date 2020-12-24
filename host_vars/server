@@ -21,6 +21,12 @@ containers:
   paste:
     name: 'paste'
     image: 'docker.io/privatebin/nginx-fpm-alpine:latest'
+  gitlab:
+    name: 'gitlab'
+    image: 'docker.io/gitlab/gitlab-ee:latest'
+  gitlab_runner:
+    name: 'gitlab-runner'
+    image: 'docker.io/gitlab/gitlab-runner:latest'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'
@@ -43,8 +49,11 @@ volumes:
 
     # For Gitlab server
     - path: '/gitlab/config'
+      mode: '0777'
     - path: '/gitlab/log'
+      mode: '0777'
     - path: '/gitlab/data'
+      mode: '0777'
 
     # For Gitlab runner
     - path: '/gitlab-runner/config'

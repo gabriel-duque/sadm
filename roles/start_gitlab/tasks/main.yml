@@ -1,0 +1,91 @@
+---
+
+- name: Generate gitlab's dynamic configuration for Traefik
+  template:
+    src: 'gitlab.toml.j2'
+    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/gitlab.toml'
+    mode: '0444'
+
+- name: Start Gitlab server container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    env:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.{{ tld }}'
+        gitlab_rails['time_zone'] = 'Europe/Paris'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        nginx['proxy_set_headers'] = {
+          "X-Forwarded-Proto" => "https",
+          "X-Forwarded-Ssl" => "on"
+        }
+        letsencrypt['enable'] = false
+        prometheus_monitoring['enable'] = false
+
+        registry_external_url 'https://registry.{{ tld }}'
+        registry_nginx['listen_port'] = 5100
+        registry_nginx['listen_https'] = false
+        registry_nginx['proxy_set_headers'] = {
+          "X-Forwarded-Proto" => "https",
+          "X-Forwarded-Ssl" => "on"
+        }
+
+        pages_external_url 'https://pages.{{ tld }}'
+        pages_nginx['listen_port'] = 5200
+        pages_nginx['listen_https'] = false
+        pages_nginx['proxy_set_headers'] = {
+          "X-Forwarded-Proto" => "https",
+          "X-Forwarded-Ssl" => "on"
+        }
+        gitlab_pages['inplace_chroot'] = true
+        gitlab_pages['external_http'] = ['{{ containers.gitlab.name }}:5201']
+    hostname: '{{ containers.gitlab.name }}'
+    image: '{{ containers.gitlab.image }}'
+    mounts:
+    - type: bind
+      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/config'
+      target: '/etc/gitlab'
+      read_only: false
+    - type: bind
+      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/log'
+      target: '/var/log/gitlab'
+      read_only: false
+    - type: bind
+      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/data'
+      target: '/var/opt/gitlab'
+      read_only: false
+    name: '{{ containers.gitlab.name }}'
+    networks:
+      - name: '{{ default_network }}'
+        aliases:
+          - '{{ containers.gitlab.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped
+
+- name: Start Gitlab runner container
+  community.general.docker_container:
+    cap_drop:
+      - all
+    container_default_behavior: 'no_defaults'
+    detach: true
+    env:
+      TZ: 'Europe/Paris'
+    hostname: '{{ containers.gitlab_runner.name }}'
+    image: '{{ containers.gitlab_runner.image }}'
+    mounts:
+    - type: bind
+      source: '{{ base_dir }}{{ persistent_dir }}/gitlab-runner/config'
+      target: '/etc/gitlab-runner'
+      read_only: false
+    - type: bind
+      source: '/var/run/docker.sock'
+      target: '/var/run/docker.sock'
+      read_only: false
+    name: '{{ containers.gitlab_runner.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped

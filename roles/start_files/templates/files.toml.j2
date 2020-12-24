@@ -17,6 +17,7 @@
       ]
       [http.routers.files_https_PUT.tls]
         certResolver = "sadm_tlschallenge"
+
     [http.routers.files_https]
       rule = "Host(`files.{{ tld }}`)"
       entryPoints = "https"

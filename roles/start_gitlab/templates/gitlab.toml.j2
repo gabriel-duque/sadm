@@ -1,0 +1,38 @@
+[http]
+  [http.services]
+    [[http.services.gitlab.loadBalancer.servers]]
+      url = "http://{{ containers.gitlab.name }}/"
+    [[http.services.registry.loadBalancer.servers]]
+      url = "http://{{ containers.gitlab.name }}:5100/"
+    [[http.services.pages.loadBalancer.servers]]
+      url = "http://{{ containers.gitlab.name }}:5201/"
+  [http.routers]
+    [http.routers.gitlab_https]
+      rule = "Host(`gitlab.{{ tld }}`)"
+      entryPoints = "https"
+      service = "gitlab"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.gitlab_https.tls]
+        certResolver = "sadm_tlschallenge"
+
+    [http.routers.registry_https]
+      rule = "Host(`registry.{{ tld }}`)"
+      entryPoints = "https"
+      service = "registry"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.registry_https.tls]
+        certResolver = "sadm_tlschallenge"
+
+    [http.routers.pages_https]
+      rule = "Host(`pages.{{ tld }}`)"
+      entryPoints = "https"
+      service = "pages"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.pages_https.tls]
+        certResolver = "sadm_tlschallenge"

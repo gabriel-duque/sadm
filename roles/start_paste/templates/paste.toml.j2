@@ -15,8 +15,9 @@
         "security_headers",
         "paste_auth"
       ]
-      [http.routers.paste_https_PUT.tls]
+      [http.routers.paste_https_POST.tls]
         certResolver = "sadm_tlschallenge"
+
     [http.routers.paste_https]
       rule = "Host(`paste.{{ tld }}`)"
       entryPoints = "https"
