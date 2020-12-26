@@ -28,7 +28,7 @@
         certResolver = "sadm_tlschallenge"
 
     [http.routers.pages_https]
-      rule = "Host(`pages.{{ tld }}`)"
+      rule = "Host(`{{ gitlab_pages_hosts | join("`, `") }}`)"
       entryPoints = "https"
       service = "pages"
       middlewares = [
@@ -36,3 +36,16 @@
       ]
       [http.routers.pages_https.tls]
         certResolver = "sadm_tlschallenge"
+
+[tcp]
+  [tcp.services]
+    [[tcp.services.gitlab_ssh.loadBalancer.servers]]
+      address = "gitlab:22"
+  [tcp.routers]
+    [tcp.routers.gitlab_ssh]
+      rule = "HostSNI(`*`)"
+      entryPoints = [
+        "tcp_22"
+      ]
+      service = "gitlab_ssh"
+      

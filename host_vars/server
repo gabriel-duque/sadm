@@ -9,6 +9,10 @@ node_arch: 'amd64'
 tld: 'zuh0.com'
 admin_email: 'gabriel@zuh0.com'
 default_network: 'sadm-net'
+gitlab_pages_hosts:
+  - 'zuh0.com'
+  - 'pages.zuh0.com'
+  - 'zuh0.pages.zuh0.com'
 networks:
   - 'sadm-net'
 containers:
@@ -49,9 +53,9 @@ volumes:
 
     # For Gitlab server
     - path: '/gitlab/config'
-      mode: '0777'
+      mode: '0775'
     - path: '/gitlab/log'
-      mode: '0777'
+      mode: '0755'
     - path: '/gitlab/data'
       mode: '0777'
 
