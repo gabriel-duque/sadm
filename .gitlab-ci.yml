@@ -1,0 +1,22 @@
+---
+
+image: python:alpine
+
+stages:
+  - test
+
+variables:
+  ANSIBLE_CONFIG: 'ansible.cfg'
+
+lint:
+  stage: test
+  script:
+    - >
+      apk add --no-cache
+      gcc
+      libffi-dev
+      musl-dev
+      openssl-dev
+    - pip install -r requirements.txt
+    - yamllint .
+    - ansible-lint .
