@@ -19,8 +19,8 @@
     dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/{{ item.name }}'
     mode: '0444'
   loop:
-    - { name: 'security_headers.toml' }
-    - { name: 'tls.toml' }
+    - {name: 'security_headers.toml'}
+    - {name: 'tls.toml'}
 
 - name: Start Traefik container
   community.general.docker_container:
@@ -35,21 +35,21 @@
     hostname: '{{ containers.traefik.name }}'
     image: '{{ containers.traefik.image }}'
     mounts:
-    - type: bind
-      source: '{{ base_dir }}{{ generated_dir }}/traefik/static'
-      target: '{{ volumes.prefix }}/traefik/static'
-      read_only: true
-    - type: bind
-      source: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic'
-      target: '{{ volumes.prefix }}/traefik/dynamic'
-      read_only: true
-    - type: bind
-      source: '{{ base_dir }}{{ persistent_dir }}/traefik/data'
-      target: '{{ volumes.prefix }}/traefik/data'
-      read_only: false
-    - type: bind
-      source: '/var/run/docker.sock'
-      target: '/var/run/docker.sock'
+      - type: bind
+        source: '{{ base_dir }}{{ generated_dir }}/traefik/static'
+        target: '{{ volumes.prefix }}/traefik/static'
+        read_only: true
+      - type: bind
+        source: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic'
+        target: '{{ volumes.prefix }}/traefik/dynamic'
+        read_only: true
+      - type: bind
+        source: '{{ base_dir }}{{ persistent_dir }}/traefik/data'
+        target: '{{ volumes.prefix }}/traefik/data'
+        read_only: false
+      - type: bind
+        source: '/var/run/docker.sock'
+        target: '/var/run/docker.sock'
     name: '{{ containers.traefik.name }}'
     networks:
       - name: '{{ default_network }}'

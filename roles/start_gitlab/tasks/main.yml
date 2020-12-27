@@ -43,18 +43,18 @@
     hostname: '{{ containers.gitlab.name }}'
     image: '{{ containers.gitlab.image }}'
     mounts:
-    - type: bind
-      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/config'
-      target: '/etc/gitlab'
-      read_only: false
-    - type: bind
-      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/log'
-      target: '/var/log/gitlab'
-      read_only: false
-    - type: bind
-      source: '{{ base_dir }}{{ persistent_dir }}/gitlab/data'
-      target: '/var/opt/gitlab'
-      read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/config'
+        target: '/etc/gitlab'
+        read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/log'
+        target: '/var/log/gitlab'
+        read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/data'
+        target: '/var/opt/gitlab'
+        read_only: false
     name: '{{ containers.gitlab.name }}'
     networks:
       - name: '{{ default_network }}'
@@ -67,8 +67,6 @@
 
 - name: Start Gitlab runner container
   community.general.docker_container:
-    cap_drop:
-      - all
     container_default_behavior: 'no_defaults'
     detach: true
     env:
@@ -76,15 +74,17 @@
     hostname: '{{ containers.gitlab_runner.name }}'
     image: '{{ containers.gitlab_runner.image }}'
     mounts:
-    - type: bind
-      source: '{{ base_dir }}{{ persistent_dir }}/gitlab-runner/config'
-      target: '/etc/gitlab-runner'
-      read_only: false
-    - type: bind
-      source: '/var/run/docker.sock'
-      target: '/var/run/docker.sock'
-      read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ persistent_dir }}/gitlab-runner/config'
+        target: '/etc/gitlab-runner'
+        read_only: false
+      - type: bind
+        source: '/var/run/docker.sock'
+        target: '/var/run/docker.sock'
+        read_only: false
     name: '{{ containers.gitlab_runner.name }}'
+    networks:
+      - name: "bridge"
     networks_cli_compatible: false
     pull: true
     purge_networks: true

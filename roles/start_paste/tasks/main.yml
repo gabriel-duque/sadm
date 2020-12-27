@@ -18,10 +18,10 @@
     hostname: '{{ containers.paste.name }}'
     image: '{{ containers.paste.image }}'
     mounts:
-    - type: bind
-      source: '{{ base_dir }}{{ volatile_dir }}/paste/data'
-      target: '/srv/data'
-      read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ volatile_dir }}/paste/data'
+        target: '/srv/data'
+        read_only: false
     name: '{{ containers.paste.name }}'
     networks:
       - name: '{{ default_network }}'

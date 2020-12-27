@@ -7,11 +7,12 @@
   vars_files:
     - vaulted_vars/secrets
   roles:
-  - role: setup_sshd
-  - role: install_docker
-  - role: create_directories
-  - role: create_networks
-  - role: start_traefik
-  - role: start_files
-  - role: start_paste
-  - role: start_gitlab
+    - role: setup_sshd
+    - role: install_docker
+    - role: create_directories
+    - role: create_networks
+    - role: start_traefik
+    - role: start_files
+    - role: start_paste
+    - role: start_gitlab
+    - role: start_wireguard

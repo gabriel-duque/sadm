@@ -18,10 +18,10 @@
     hostname: '{{ containers.files.name }}'
     image: '{{ containers.files.image }}'
     mounts:
-    - type: bind
-      source: '{{ base_dir }}{{ volatile_dir }}/files/data'
-      target: '{{ volumes.prefix }}'
-      read_only: false
+      - type: bind
+        source: '{{ base_dir }}{{ volatile_dir }}/files/data'
+        target: '{{ volumes.prefix }}'
+        read_only: false
     name: '{{ containers.files.name }}'
     networks:
       - name: '{{ default_network }}'
