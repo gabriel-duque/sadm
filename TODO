@@ -1,8 +1,9 @@
 # System Administration TODO:
 
 [ ] - Unattended updates
-[ ] - Wireguard VPN
+[x] - Wireguard VPN
 [ ] - Matrix Homeserver
 [ ] - Firewall
 [ ] - IRC Client
 [ ] - JupyterHub Server
+[ ] - Monitoring
