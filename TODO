@@ -5,5 +5,5 @@
 [ ] - Matrix Homeserver
 [x] - Firewall
 [ ] - IRC Client
-[ ] - JupyterHub Server
+[x] - JupyterHub Server
 [ ] - Monitoring

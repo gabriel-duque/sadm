@@ -17,3 +17,4 @@
     - role: start_paste
     - role: start_gitlab
     - role: start_wireguard
+    - role: start_jupyterhub

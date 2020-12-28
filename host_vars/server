@@ -5,6 +5,11 @@
 docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
 docker_repo_url: 'https://download.docker.com/linux/ubuntu'
 node_arch: 'amd64'
+jupyterhub:
+  admin_user: 'zuh0'
+  users:
+    - 'zuh0'
+    - 'katynkae'
 
 tld: 'zuh0.com'
 admin_email: 'gabriel@zuh0.com'
@@ -34,6 +39,9 @@ containers:
   wireguard:
     name: 'wireguard'
     image: 'registry.zuh0.com/zuh0/wg-container'
+  jupyterhub:
+    name: 'jupyterhub'
+    image: 'registry.zuh0.com/zuh0/jupyterhub-container'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'
@@ -60,10 +68,16 @@ volumes:
     - path: '/gitlab/log'
       mode: '0755'
     - path: '/gitlab/data'
-      mode: '0777'
+      mode: '0755'
 
     # For Gitlab runner
     - path: '/gitlab-runner/config'
+
+    # For JupyterHub
+    - path: '/jupyterhub/data'
+      mode: '0777'
+      owner: '1000'
+      group: '100'
 
     # For Wireguard
     - path: '/wireguard/data'
