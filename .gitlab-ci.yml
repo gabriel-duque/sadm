@@ -19,4 +19,4 @@ lint:
       openssl-dev
     - pip install -r requirements.txt
     - yamllint .
-    - ansible-lint .
+    - ansible-lint
