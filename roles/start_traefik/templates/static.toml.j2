@@ -25,13 +25,15 @@
 
 [entryPoints]
   [entryPoints.https]
-    address = ":443"
+    address = ":443/tcp"
   [entryPoints.http]
-    address = ":80"
+    address = ":80/tcp"
     [entryPoints.http.http.redirections]
       [entryPoints.http.http.redirections.entryPoint]
-        to = ":443"
+        to = "https"
         scheme = "https"
         permanent = true
   [entryPoints.tcp_22]
-    address = ":22"
+    address = ":22/tcp"
+  [entryPoints.udp_51820]
+    address = ":51820/udp"

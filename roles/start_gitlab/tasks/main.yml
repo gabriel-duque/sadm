@@ -67,6 +67,8 @@
 
 - name: Start Gitlab runner container
   community.general.docker_container:
+    capabilities:
+      - all
     container_default_behavior: 'no_defaults'
     detach: true
     env:
@@ -88,4 +90,5 @@
     networks_cli_compatible: false
     pull: true
     purge_networks: true
+    privileged: true
     restart_policy: unless-stopped

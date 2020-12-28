@@ -1,0 +1,10 @@
+[udp]
+  [udp.services]
+    [[udp.services.wireguard.loadBalancer.servers]]
+      address = "wireguard:51820"
+  [udp.routers]
+    [udp.routers.wireguard]
+      entryPoints = [
+      "udp_51820"
+      ]
+      service = "wireguard"

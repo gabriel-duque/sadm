@@ -1,0 +1,10 @@
+[Interface]
+PrivateKey = {{ item.private_key }}
+Address = {{ item.address }}
+DNS = 1.1.1.1,1.0.0.1
+
+[Peer]
+PublicKey = {{ secrets.wireguard_server.public_key }}
+PresharedKey = {{ item.shared_psk }}
+Endpoint = vpn.{{ tld }}:51820
+AllowedIPs = 0.0.0.0/0

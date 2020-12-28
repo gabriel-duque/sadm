@@ -57,9 +57,10 @@
           - '{{ containers.traefik.name }}'
     networks_cli_compatible: false
     published_ports:
-      - '22:22'
-      - '80:80'
-      - '443:443'
+      - '22:22/tcp'
+      - '80:80/tcp'
+      - '443:443/tcp'
+      - '51820:51820/udp'
     pull: true
     purge_networks: true
     restart_policy: unless-stopped

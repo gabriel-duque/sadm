@@ -31,12 +31,15 @@ containers:
   gitlab_runner:
     name: 'gitlab-runner'
     image: 'docker.io/gitlab/gitlab-runner:latest'
+  wireguard:
+    name: 'wireguard'
+    image: 'registry.zuh0.com/zuh0/wg-container'
 base_dir: '/sadm'
 generated_dir: '/generated'
 persistent_dir: '/persistent'
 volatile_dir: '/volatile'
 volumes:
-  prefix: '/docker-volume'
+  prefix: '/volume'
   default:
     owner: 'root'
     group: 'root'
@@ -61,6 +64,9 @@ volumes:
 
     # For Gitlab runner
     - path: '/gitlab-runner/config'
+
+    # For Wireguard
+    - path: '/wireguard/data'
 
   volatile:
     # For transfer.sh
