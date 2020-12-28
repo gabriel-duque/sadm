@@ -2,7 +2,7 @@
   [http.middlewares]
     [http.middlewares.traefik_auth]
       [http.middlewares.traefik_auth.basicAuth]
-        users = "{{ secrets.basic_auth.traefik }}" 
+        users = "{{ secrets.traefik.auth_token }}" 
   [http.routers]
     [http.routers.traefik_https]
       rule = "Host(`traefik.{{ tld }}`)"

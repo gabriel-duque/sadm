@@ -21,7 +21,7 @@
     dest: >-
       '{{ base_dir }}{{ persistent_dir }}/wireguard/data/{{ item.name }}.conf'
     mode: '0400'
-  loop: '{{ secrets.wireguard_peers }}'
+  loop: '{{ secrets.wireguard.peers }}'
   loop_control:
     label: '{{ item.name }}'
 

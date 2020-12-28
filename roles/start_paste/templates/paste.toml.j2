@@ -5,7 +5,7 @@
   [http.middlewares]
     [http.middlewares.paste_auth]
       [http.middlewares.paste_auth.basicAuth]
-        users = "{{ secrets.basic_auth.paste }}" 
+        users = "{{ secrets.paste.auth_token }}" 
   [http.routers]
     [http.routers.paste_https_POST]
       rule = "Host(`paste.{{ tld }}`) && Method(`POST`)"

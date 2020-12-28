@@ -5,7 +5,7 @@
   [http.middlewares]
     [http.middlewares.files_auth]
       [http.middlewares.files_auth.basicAuth]
-        users = "{{ secrets.basic_auth.files }}" 
+        users = "{{ secrets.files.auth_token }}" 
   [http.routers]
     [http.routers.files_https_PUT]
       rule = "Host(`files.{{ tld }}`) && Method(`PUT`)"

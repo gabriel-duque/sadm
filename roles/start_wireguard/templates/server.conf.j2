@@ -1,9 +1,15 @@
 [Interface]
-Address = {{ secrets.wireguard_server.address }}
+Address = {{ secrets.wireguard.server.address }}
 ListenPort = 51820
-PrivateKey = {{ secrets.wireguard_server.private_key }}
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -o %i -j ACCEPT
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -D FORWARD -o %i -j ACCEPT
+PrivateKey = {{ secrets.wireguard.server.private_key }}
+
+PostUp = iptables -A FORWARD -i %i -j ACCEPT
+PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostUp = iptables -A FORWARD -o %i -j ACCEPT
+
+PostDown = iptables -D FORWARD -i %i -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -o %i -j ACCEPT
 
 {% for peer in secrets.wireguard_peers %}
 
@@ -11,5 +17,6 @@ PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -
 [Peer]
 PublicKey = {{ peer.public_key }}
 AllowedIPs = {{ peer.address }}
-PresharedKey = {{ peer.shared_psk }}
+PresharedKey = {{ peer.preshared_key }}
+
 {% endfor %}
