@@ -21,6 +21,7 @@
     detach: true
     env:
       ADMIN_USER: '{{ jupyterhub.admin_user }}'
+      DEFAULT_IMAGE: '{{ jupyterhub.default_image }}'
       GITLAB_URL: 'https://gitlab.{{ tld }}'
       HUB_CONNECT_IP: '{{ containers.jupyterhub.name }}'
       NETWORK_NAME: '{{ default_network }}'
