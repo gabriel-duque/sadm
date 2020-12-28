@@ -12,7 +12,7 @@
     state: directory
     owner: '1000'
     group: '100'
-    mode: '{{ item.mode | default(volumes.default.mode, true) }}'
+    mode: '{{ item.mode | default("0700", true) }}'
   loop: '{{ jupyterhub.users }}'
 
 - name: Start JupyterHub container
