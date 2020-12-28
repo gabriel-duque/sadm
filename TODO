@@ -3,7 +3,7 @@
 [ ] - Unattended updates
 [x] - Wireguard VPN
 [ ] - Matrix Homeserver
-[ ] - Firewall
+[x] - Firewall
 [ ] - IRC Client
 [ ] - JupyterHub Server
 [ ] - Monitoring

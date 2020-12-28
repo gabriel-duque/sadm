@@ -1,0 +1,33 @@
+---
+
+- name: Install UFW
+  apt:
+    name: ufw
+    state: latest
+    update_cache: true
+
+- name: Set UFW default policies
+  community.general.ufw:
+    direction: '{{ item.direction }}'
+    policy: '{{ item.policy }}'
+  loop:
+    - {direction: 'incoming', policy: 'deny'}
+    - {direction: 'outgoing', policy: 'allow'}
+  notify: Restart UFW
+
+- name: Open necessary ports
+  community.general.ufw:
+    rule: 'allow'
+    port: '{{ item.port }}'
+    proto: '{{ item.proto }}'
+  loop:
+    - {port: '22', proto: 'tcp'}
+    - {port: '222', proto: 'tcp'}
+    - {port: '80', proto: 'tcp'}
+    - {port: '443', proto: 'tcp'}
+    - {port: '51820', proto: 'udp'}
+  notify: Restart UFW
+
+- name: Enable UFW
+  ufw:
+    state: 'enabled'
