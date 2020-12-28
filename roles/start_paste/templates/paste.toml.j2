@@ -1,7 +1,7 @@
 [http]
   [http.services]
     [[http.services.paste.loadBalancer.servers]]
-      url = "http://paste:8080/"
+      url = "http://{{ containers.paste.name }}:8080/"
   [http.middlewares]
     [http.middlewares.paste_auth]
       [http.middlewares.paste_auth.basicAuth]

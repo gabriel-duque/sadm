@@ -1,7 +1,7 @@
 [http]
   [http.services]
     [[http.services.files.loadBalancer.servers]]
-      url = "http://files:8080/"
+      url = "http://{{ containers.files.name }}:8080/"
   [http.middlewares]
     [http.middlewares.files_auth]
       [http.middlewares.files_auth.basicAuth]
