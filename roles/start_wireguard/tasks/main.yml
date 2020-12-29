@@ -9,7 +9,7 @@
            /wireguard.toml"
     mode: '0444'
 
-- name: Install Wireguard and QRencode
+- name: Install Wireguard and QRencode on host
   apt:
     autoclean: true
     autoremove: true
@@ -26,6 +26,7 @@
            {{ services.containers.wireguard.volumes.config.path }}\
            /wg-sadm.conf"
     mode: '0400'
+  notify: Restart Wireguard container
 
 - name: Generate client configs
   template:
@@ -38,6 +39,7 @@
   loop: '{{ secrets.wireguard.peers }}'
   loop_control:
     label: '{{ item.name }}'
+  notify: Restart Wireguard container
 
 - name: Start Wireguard container
   community.general.docker_container:

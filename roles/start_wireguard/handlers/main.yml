@@ -1,0 +1,8 @@
+---
+
+- name: Restart Wireguard container
+  community.general.docker_container:
+    name: '{{ services.containers.wireguard.name }}'
+    state: started
+    restart: true
+    container_default_behavior: 'no_defaults'
