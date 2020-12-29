@@ -42,7 +42,6 @@
           "X-Forwarded-Ssl" => "on"
         }
         gitlab_pages['inplace_chroot'] = true
-        gitlab_pages['external_http'] = ['{{ services.containers.gitlab.name }}:5201']
     hostname: '{{ services.containers.gitlab.name }}'
     image: '{{ services.containers.gitlab.image }}'
     mounts:

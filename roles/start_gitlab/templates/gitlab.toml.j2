@@ -5,7 +5,7 @@
     [[http.services.registry.loadBalancer.servers]]
       url = "http://{{ services.containers.gitlab.name }}:5100/"
     [[http.services.pages.loadBalancer.servers]]
-      url = "http://{{ services.containers.gitlab.name }}:5201/"
+      url = "http://{{ services.containers.gitlab.name }}:5200/"
   [http.routers]
     [http.routers.gitlab_https]
       rule = "Host(`gitlab.{{ setup.tld }}`)"
