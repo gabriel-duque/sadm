@@ -8,6 +8,7 @@
     - vaulted_vars/secrets
   roles:
     - role: setup_sshd
+    - role: setup_unattended_upgrades
     - role: setup_firewall
     - role: install_docker
     - role: create_directories

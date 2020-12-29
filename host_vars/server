@@ -8,6 +8,7 @@
 #   - setup.admin_email
 #   - services.containers.gitlab.pages.hosts
 #   - services.containers.jupyterhub.admin
+#   - services.containers.jupyterhub.notebook_image
 #   - services.containers.jupyterhub.users
 #
 #   You will also want to create a secrets file in `vaulted_vars/secrets`.

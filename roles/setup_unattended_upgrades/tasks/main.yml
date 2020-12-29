@@ -1,0 +1,34 @@
+---
+
+- name: Install unattended-upgrades
+  apt:
+    name: unattended-upgrades
+    state: latest
+    update_cache: true
+
+- name: Start unattended-upgrades service
+  systemd:
+    name: unattended-upgrades.service
+    state: started
+    enabled: true
+
+- name: Enable unattended-upgrades in apt's configuration
+  copy:
+    src: '20auto-upgrades'
+    dest: '/etc/apt/apt.conf.d/20auto-upgrades'
+    mode: '0644'
+  notify: Restart unattended-upgrades
+
+- name: Enable reboot on update if necessary
+  lineinfile:
+    path: '/etc/apt/apt.conf.d/50unattended-upgrades'
+    regexp: '^[/\s]*Unattended-Upgrade::Automatic-Reboot\s'
+    line: 'Unattended-Upgrade::Automatic-Reboot "true";'
+  notify: Restart unattended-upgrades
+
+- name: Set reboot time to 3:42AM
+  lineinfile:
+    path: '/etc/apt/apt.conf.d/50unattended-upgrades'
+    regexp: '^[/\s]*Unattended-Upgrade::Automatic-Reboot-Time\s'
+    line: 'Unattended-Upgrade::Automatic-Reboot-Time "03:42";'
+  notify: Restart unattended-upgrades
