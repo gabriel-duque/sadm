@@ -1,3 +1,5 @@
+{{ ansible_managed | comment }}
+
 [Interface]
 Address = {{ secrets.wireguard.server.address }}
 ListenPort = 51820
