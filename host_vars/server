@@ -93,6 +93,7 @@ services:
       pages:
         hosts:
           - 'zuh0.com'
+          - 'www.zuh0.com'
           - 'pages.zuh0.com'
           - 'zuh0.pages.zuh0.com'
 
