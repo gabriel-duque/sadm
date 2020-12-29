@@ -3,7 +3,10 @@
 - name: Generate files's dynamic configuration for Traefik
   template:
     src: 'files.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/files.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /files.toml"
     mode: '0444'
 
 - name: Start transfer.sh container
@@ -12,21 +15,23 @@
       - all
     command:
       - '--provider=local'
-      - '--basedir={{ volumes.prefix }}'
+      - '--basedir={{ services.volumes.dest.base }}'
     container_default_behavior: 'no_defaults'
     detach: true
-    hostname: '{{ containers.files.name }}'
-    image: '{{ containers.files.image }}'
+    hostname: '{{ services.containers.files.name }}'
+    image: '{{ services.containers.files.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ volatile_dir }}/files/data'
-        target: '{{ volumes.prefix }}'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.volatile }}\
+                 {{ services.containers.files.volumes.data.path }}"
+        target: '{{ services.volumes.dest.base }}'
         read_only: false
-    name: '{{ containers.files.name }}'
+    name: '{{ services.containers.files.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.files.name }}'
+          - '{{ services.containers.files.name }}'
     networks_cli_compatible: false
     pull: true
     purge_networks: true

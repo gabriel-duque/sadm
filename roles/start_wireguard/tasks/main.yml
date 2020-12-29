@@ -1,5 +1,14 @@
 ---
 
+- name: Generate Wireguard's dynamic configuration for Traefik
+  template:
+    src: 'wireguard.toml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /wireguard.toml"
+    mode: '0444'
+
 - name: Install Wireguard and QRencode
   apt:
     autoclean: true
@@ -12,24 +21,23 @@
 - name: Generate server config
   template:
     src: 'server.conf.j2'
-    dest: '{{ base_dir }}{{ persistent_dir }}/wireguard/data/wg-sadm.conf'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.wireguard.volumes.config.path }}\
+           /wg-sadm.conf"
     mode: '0400'
 
 - name: Generate client configs
   template:
     src: 'client.conf.j2'
-    dest: >-
-      '{{ base_dir }}{{ persistent_dir }}/wireguard/data/{{ item.name }}.conf'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.wireguard.volumes.config.path }}\
+           /{{ item.name }}.conf"
     mode: '0400'
   loop: '{{ secrets.wireguard.peers }}'
   loop_control:
     label: '{{ item.name }}'
-
-- name: Generate Wireguard's dynamic configuration for Traefik
-  template:
-    src: 'wireguard.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/wireguard.toml'
-    mode: '0444'
 
 - name: Start Wireguard container
   community.general.docker_container:
@@ -38,22 +46,24 @@
       - sys_module
     container_default_behavior: 'no_defaults'
     detach: true
-    hostname: '{{ containers.wireguard.name }}'
-    image: '{{ containers.wireguard.image }}'
+    hostname: '{{ services.containers.wireguard.name }}'
+    image: '{{ services.containers.wireguard.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/wireguard/data'
-        target: '{{ volumes.prefix }}'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+                 {{ services.containers.wireguard.volumes.config.path }}"
+        target: '{{ services.volumes.dest.base }}'
         read_only: true
       - type: bind
         source: '/lib/modules'
         target: '/lib/modules'
         read_only: true
-    name: '{{ containers.wireguard.name }}'
+    name: '{{ services.containers.wireguard.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.wireguard.name }}'
+          - '{{ services.containers.wireguard.name }}'
     networks_cli_compatible: false
     pull: true
     purge_networks: true

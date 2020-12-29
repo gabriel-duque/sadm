@@ -11,7 +11,7 @@ PostDown = iptables -D FORWARD -i %i -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -o %i -j ACCEPT
 
-{% for peer in secrets.wireguard_peers %}
+{% for peer in secrets.wireguard.peers %}
 
 # {{ peer.name }}
 [Peer]

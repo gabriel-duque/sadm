@@ -1,10 +1,10 @@
 [http]
   [http.services]
     [[http.services.jupyterhub.loadBalancer.servers]]
-      url = "http://{{ containers.jupyterhub.name }}:8000/"
+      url = "http://{{ services.containers.jupyterhub.name }}:8000/"
   [http.routers]
     [http.routers.jupyterhub_https]
-      rule = "Host(`jupyterhub.{{ tld }}`)"
+      rule = "Host(`jupyterhub.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "jupyterhub"
       middlewares = [

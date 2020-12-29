@@ -18,7 +18,7 @@
 
 - name: Add Docker's GPG apt key
   apt_key:
-    url: '{{ docker_apt_key_url }}'
+    url: '{{ setup.docker_apt_key_url }}'
     state: present
 
 - name: Get Ubuntu version's short codename
@@ -29,8 +29,8 @@
 - name: Add Docker repository
   apt_repository:
     repo: >-
-      deb [arch={{ node_arch }}]
-      {{ docker_repo_url }}
+      deb [arch={{ setup.node_arch }}]
+      {{ setup.docker_repo_url }}
       {{ ubuntu_codename.stdout }}
       stable
 

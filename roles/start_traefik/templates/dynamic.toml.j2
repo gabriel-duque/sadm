@@ -5,7 +5,7 @@
         users = "{{ secrets.traefik.auth_token }}" 
   [http.routers]
     [http.routers.traefik_https]
-      rule = "Host(`traefik.{{ tld }}`)"
+      rule = "Host(`traefik.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "api@internal"
       middlewares = [

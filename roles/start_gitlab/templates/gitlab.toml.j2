@@ -1,14 +1,14 @@
 [http]
   [http.services]
     [[http.services.gitlab.loadBalancer.servers]]
-      url = "http://{{ containers.gitlab.name }}/"
+      url = "http://{{ services.containers.gitlab.name }}/"
     [[http.services.registry.loadBalancer.servers]]
-      url = "http://{{ containers.gitlab.name }}:5100/"
+      url = "http://{{ services.containers.gitlab.name }}:5100/"
     [[http.services.pages.loadBalancer.servers]]
-      url = "http://{{ containers.gitlab.name }}:5201/"
+      url = "http://{{ services.containers.gitlab.name }}:5201/"
   [http.routers]
     [http.routers.gitlab_https]
-      rule = "Host(`gitlab.{{ tld }}`)"
+      rule = "Host(`gitlab.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "gitlab"
       middlewares = [
@@ -18,7 +18,7 @@
         certResolver = "sadm_tlschallenge"
 
     [http.routers.registry_https]
-      rule = "Host(`registry.{{ tld }}`)"
+      rule = "Host(`registry.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "registry"
       middlewares = [
@@ -28,7 +28,9 @@
         certResolver = "sadm_tlschallenge"
 
     [http.routers.pages_https]
-      rule = "Host(`{{ gitlab_pages_hosts | join("`, `") }}`)"
+      rule = """Host(`\
+                  {{ services.containers.gitlab.pages.hosts | join("`, `") }}\
+             `)"""
       entryPoints = "https"
       service = "pages"
       middlewares = [
@@ -40,7 +42,7 @@
 [tcp]
   [tcp.services]
     [[tcp.services.gitlab_ssh.loadBalancer.servers]]
-      address = "gitlab:22"
+      address = "{{ services.containers.gitlab.name }}:22"
   [tcp.routers]
     [tcp.routers.gitlab_ssh]
       rule = "HostSNI(`*`)"

@@ -3,7 +3,10 @@
 - name: Generate gitlab's dynamic configuration for Traefik
   template:
     src: 'gitlab.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/gitlab.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /gitlab.toml"
     mode: '0444'
 
 - name: Start Gitlab server container
@@ -12,7 +15,7 @@
     detach: true
     env:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.{{ tld }}'
+        external_url 'https://gitlab.{{ setup.tld }}'
         gitlab_rails['time_zone'] = 'Europe/Paris'
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
@@ -23,7 +26,7 @@
         letsencrypt['enable'] = false
         prometheus_monitoring['enable'] = false
 
-        registry_external_url 'https://registry.{{ tld }}'
+        registry_external_url 'https://registry.{{ setup.tld }}'
         registry_nginx['listen_port'] = 5100
         registry_nginx['listen_https'] = false
         registry_nginx['proxy_set_headers'] = {
@@ -31,7 +34,7 @@
           "X-Forwarded-Ssl" => "on"
         }
 
-        pages_external_url 'https://pages.{{ tld }}'
+        pages_external_url 'https://pages.{{ setup.tld }}'
         pages_nginx['listen_port'] = 5200
         pages_nginx['listen_https'] = false
         pages_nginx['proxy_set_headers'] = {
@@ -39,27 +42,33 @@
           "X-Forwarded-Ssl" => "on"
         }
         gitlab_pages['inplace_chroot'] = true
-        gitlab_pages['external_http'] = ['{{ containers.gitlab.name }}:5201']
-    hostname: '{{ containers.gitlab.name }}'
-    image: '{{ containers.gitlab.image }}'
+        gitlab_pages['external_http'] = ['{{ services.containers.gitlab.name }}:5201']
+    hostname: '{{ services.containers.gitlab.name }}'
+    image: '{{ services.containers.gitlab.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/config'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.gitlab.volumes.config.path }}"
         target: '/etc/gitlab'
         read_only: false
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/log'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.gitlab.volumes.log.path }}"
         target: '/var/log/gitlab'
         read_only: false
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/gitlab/data'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.gitlab.volumes.data.path }}"
         target: '/var/opt/gitlab'
         read_only: false
-    name: '{{ containers.gitlab.name }}'
+    name: '{{ services.containers.gitlab.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.gitlab.name }}'
+          - '{{ services.containers.gitlab.name }}'
     networks_cli_compatible: false
     pull: true
     purge_networks: true
@@ -71,18 +80,20 @@
     detach: true
     env:
       TZ: 'Europe/Paris'
-    hostname: '{{ containers.gitlab_runner.name }}'
-    image: '{{ containers.gitlab_runner.image }}'
+    hostname: '{{ services.containers.gitlab_runner.name }}'
+    image: '{{ services.containers.gitlab_runner.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/gitlab-runner/config'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.gitlab_runner.volumes.config.path }}"
         target: '/etc/gitlab-runner'
         read_only: false
       - type: bind
         source: '/var/run/docker.sock'
         target: '/var/run/docker.sock'
         read_only: false
-    name: '{{ containers.gitlab_runner.name }}'
+    name: '{{ services.containers.gitlab_runner.name }}'
     networks:
       - name: "bridge"
     networks_cli_compatible: false

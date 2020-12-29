@@ -3,44 +3,52 @@
 - name: Generate JupyterHub's dynamic configuration for Traefik
   template:
     src: 'jupyterhub.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/jupyterhub.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /jupyterhub.toml"
     mode: '0444'
 
 - name: Create directories for JupyterHub users
   file:
-    path: '{{ base_dir }}{{ persistent_dir }}/jupyterhub/data/{{ item }}'
+    path: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.jupyterhub.volumes.data.path }}/{{ item }}"
     state: directory
     owner: '1000'
     group: '100'
     mode: '{{ item.mode | default("0700", true) }}'
-  loop: '{{ jupyterhub.users }}'
+  loop: '{{ services.containers.jupyterhub.users }}'
 
 - name: Start JupyterHub container
   community.general.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     env:
-      ADMIN_USER: '{{ jupyterhub.admin_user }}'
-      DEFAULT_IMAGE: '{{ jupyterhub.default_image }}'
-      GITLAB_URL: 'https://gitlab.{{ tld }}'
-      HUB_CONNECT_IP: '{{ containers.jupyterhub.name }}'
-      NETWORK_NAME: '{{ default_network }}'
-      OAUTH_CALLBACK_URL: 'https://jupyterhub.{{ tld }}/hub/oauth_callback'
+      ADMIN_USER: '{{ services.containers.jupyterhub.admin }}'
+      DEFAULT_IMAGE: '{{ services.containers.jupyterhub.notebook_image }}'
+      GITLAB_URL: 'https://gitlab.{{ setup.tld }}'
+      HUB_CONNECT_IP: '{{ services.containers.jupyterhub.name }}'
+      NETWORK_NAME: '{{ services.network }}'
+      OAUTH_CALLBACK_URL: "https://jupyterhub.{{ setup.tld }}\
+                           /hub/oauth_callback"
       OAUTH_CLIENT_ID: '{{ secrets.jupyterhub.client_id }}'
       OAUTH_CLIENT_SECRET: '{{ secrets.jupyterhub.client_secret }}'
-      USER_HOME_DIR: '{{ base_dir }}{{ persistent_dir }}/jupyterhub/data'
-    hostname: '{{ containers.jupyterhub.name }}'
-    image: '{{ containers.jupyterhub.image }}'
+      USER_HOME_DIR: "{{ services.volumes.src.base }}\
+                      {{ services.volumes.src.persistent }}\
+                      {{ services.containers.jupyterhub.volumes.data.path }}"
+    hostname: '{{ services.containers.jupyterhub.name }}'
+    image: '{{ services.containers.jupyterhub.image }}'
     mounts:
       - type: bind
         source: '/var/run/docker.sock'
         target: '/var/run/docker.sock'
         read_only: false
-    name: '{{ containers.jupyterhub.name }}'
+    name: '{{ services.containers.jupyterhub.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.jupyterhub.name }}'
+          - '{{ services.containers.jupyterhub.name }}'
     networks_cli_compatible: false
     pull: true
     purge_networks: true

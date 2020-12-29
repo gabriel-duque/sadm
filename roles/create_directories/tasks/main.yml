@@ -2,27 +2,33 @@
 
 - name: Create directories for generated files
   file:
-    path: '{{ base_dir }}{{ generated_dir }}{{ item.path }}'
+    path: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ item.path }}"
     state: directory
     owner: '{{ item.owner | default("root", true) }}'
     group: '{{ item.group | default("root", true) }}'
     mode: '{{ item.mode | default("0700", true) }}'
-  loop: '{{ volumes.generated }}'
+  loop: '{{ services.containers | containers2volumes("generated") }}'
 
 - name: Create directories for persistent files
   file:
-    path: '{{ base_dir }}{{ persistent_dir }}{{ item.path }}'
+    path: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ item.path }}"
     state: directory
     owner: '{{ item.owner | default("root", true) }}'
     group: '{{ item.group | default("root", true) }}'
     mode: '{{ item.mode | default("0700", true) }}'
-  loop: '{{ volumes.persistent }}'
+  loop: '{{ services.containers | containers2volumes("persistent") }}'
 
 - name: Create directories for volatile files
   file:
-    path: '{{ base_dir }}{{ volatile_dir }}{{ item.path }}'
+    path: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.volatile }}\
+           {{ item.path }}"
     state: directory
     owner: '{{ item.owner | default("root", true) }}'
     group: '{{ item.group | default("root", true) }}'
     mode: '{{ item.mode | default("0700", true) }}'
-  loop: '{{ volumes.volatile }}'
+  loop: '{{ services.containers | containers2volumes("volatile") }}'

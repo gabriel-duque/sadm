@@ -3,20 +3,27 @@
 - name: Generate Traefik's static configuration
   template:
     src: 'static.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/static/traefik.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.static.path }}/traefik.toml"
     mode: '0444'
   notify: Restart Traefik container
 
 - name: Generate Traefik's dynamic configuration
   template:
     src: 'dynamic.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/traefik.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}/traefik.toml"
     mode: '0444'
 
 - name: Copy Traefik's generic dynamic configuration files
   copy:
     src: '{{ item.name }}'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/{{ item.name }}'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /{{ item.name }}"
     mode: '0444'
   loop:
     - {name: 'security_headers.toml'}
@@ -29,32 +36,43 @@
     capabilities:
       - net_bind_service
     command:
-      - '--configFile={{ volumes.prefix }}/traefik/static/traefik.toml'
+      - "--configFile={{ services.volumes.dest.base }}\
+                      {{ services.containers.traefik.volumes.static.path }}\
+                      /traefik.toml"
     container_default_behavior: 'no_defaults'
     detach: true
-    hostname: '{{ containers.traefik.name }}'
-    image: '{{ containers.traefik.image }}'
+    hostname: '{{ services.containers.traefik.name }}'
+    image: '{{ services.containers.traefik.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ generated_dir }}/traefik/static'
-        target: '{{ volumes.prefix }}/traefik/static'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+                 {{ services.containers.traefik.volumes.static.path }}"
+        target: "{{ services.volumes.dest.base }}\
+                 {{ services.containers.traefik.volumes.static.path }}"
         read_only: true
       - type: bind
-        source: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic'
-        target: '{{ volumes.prefix }}/traefik/dynamic'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+                 {{ services.containers.traefik.volumes.dynamic.path }}"
+        target: "{{ services.volumes.dest.base }}\
+                 {{ services.containers.traefik.volumes.dynamic.path }}"
         read_only: true
       - type: bind
-        source: '{{ base_dir }}{{ persistent_dir }}/traefik/data'
-        target: '{{ volumes.prefix }}/traefik/data'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.traefik.volumes.data.path }}"
+        target: "{{ services.volumes.dest.base }}\
+                 {{ services.containers.traefik.volumes.data.path }}"
         read_only: false
       - type: bind
         source: '/var/run/docker.sock'
         target: '/var/run/docker.sock'
-    name: '{{ containers.traefik.name }}'
+    name: '{{ services.containers.traefik.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.traefik.name }}'
+          - '{{ services.containers.traefik.name }}'
     networks_cli_compatible: false
     published_ports:
       - '22:22/tcp'

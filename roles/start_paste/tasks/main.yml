@@ -3,7 +3,10 @@
 - name: Generate paste's dynamic configuration for Traefik
   template:
     src: 'paste.toml.j2'
-    dest: '{{ base_dir }}{{ generated_dir }}/traefik/dynamic/paste.toml'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /paste.toml"
     mode: '0444'
 
 - name: Start privatebin container
@@ -15,18 +18,20 @@
     env:
       TZ: 'Europe/Paris'
       PHP_TZ: 'Europe/Paris'
-    hostname: '{{ containers.paste.name }}'
-    image: '{{ containers.paste.image }}'
+    hostname: '{{ services.containers.paste.name }}'
+    image: '{{ services.containers.paste.image }}'
     mounts:
       - type: bind
-        source: '{{ base_dir }}{{ volatile_dir }}/paste/data'
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.volatile }}\
+                 {{ services.containers.paste.volumes.data.path }}"
         target: '/srv/data'
         read_only: false
-    name: '{{ containers.paste.name }}'
+    name: '{{ services.containers.paste.name }}'
     networks:
-      - name: '{{ default_network }}'
+      - name: '{{ services.network }}'
         aliases:
-          - '{{ containers.paste.name }}'
+          - '{{ services.containers.paste.name }}'
     networks_cli_compatible: false
     pull: true
     purge_networks: true

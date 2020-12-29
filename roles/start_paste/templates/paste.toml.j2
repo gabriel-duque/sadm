@@ -1,14 +1,14 @@
 [http]
   [http.services]
     [[http.services.paste.loadBalancer.servers]]
-      url = "http://{{ containers.paste.name }}:8080/"
+      url = "http://{{ services.containers.paste.name }}:8080/"
   [http.middlewares]
     [http.middlewares.paste_auth]
       [http.middlewares.paste_auth.basicAuth]
         users = "{{ secrets.paste.auth_token }}" 
   [http.routers]
     [http.routers.paste_https_POST]
-      rule = "Host(`paste.{{ tld }}`) && Method(`POST`)"
+      rule = "Host(`paste.{{ setup.tld }}`) && Method(`POST`)"
       entryPoints = "https"
       service = "paste"
       middlewares = [
@@ -19,7 +19,7 @@
         certResolver = "sadm_tlschallenge"
 
     [http.routers.paste_https]
-      rule = "Host(`paste.{{ tld }}`)"
+      rule = "Host(`paste.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "paste"
       middlewares = [

@@ -1,14 +1,14 @@
 [http]
   [http.services]
     [[http.services.files.loadBalancer.servers]]
-      url = "http://{{ containers.files.name }}:8080/"
+      url = "http://{{ services.containers.files.name }}:8080/"
   [http.middlewares]
     [http.middlewares.files_auth]
       [http.middlewares.files_auth.basicAuth]
         users = "{{ secrets.files.auth_token }}" 
   [http.routers]
     [http.routers.files_https_PUT]
-      rule = "Host(`files.{{ tld }}`) && Method(`PUT`)"
+      rule = "Host(`files.{{ setup.tld }}`) && Method(`PUT`)"
       entryPoints = "https"
       service = "files"
       middlewares = [
@@ -19,7 +19,7 @@
         certResolver = "sadm_tlschallenge"
 
     [http.routers.files_https]
-      rule = "Host(`files.{{ tld }}`)"
+      rule = "Host(`files.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "files"
       middlewares = [

@@ -1,93 +1,130 @@
 ---
 
-# This file holds all the cleartext variables for our infrastructure
+# This file holds all the cleartext variables for our infrastructure.
+#
+# Here is a list of variables you might want to change:
+#   
+#   - setup.tld
+#   - setup.admin_email
+#   - services.containers.gitlab.pages.hosts
+#   - services.containers.jupyterhub.admin
+#   - services.containers.jupyterhub.users
+#
+#   You will also want to create a secrets file in `vaulted_vars/secrets`.
+#   There is an example secrets file at `examples/secrets` but DO NOT use that
+#   one for your deployment as it contains dummy values.
 
-docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
-docker_repo_url: 'https://download.docker.com/linux/ubuntu'
-node_arch: 'amd64'
-jupyterhub:
-  default_image: 'registry.zuh0.com/zuh0/jupyter-notebook-image'
-  admin_user: 'zuh0'
-  users:
-    - 'zuh0'
-    - 'katynkae'
+# Miscellaneous configuration variables for our system
+setup:
+  tld: 'zuh0.com'  # Base domain name
+  admin_email: 'gabriel@zuh0.com'  # For Let's encrypt's ACME account
+  docker_apt_key_url: 'https://download.docker.com/linux/ubuntu/gpg'
+  docker_repo_url: 'https://download.docker.com/linux/ubuntu'
+  node_arch: 'amd64'
 
-tld: 'zuh0.com'
-admin_email: 'gabriel@zuh0.com'
-default_network: 'sadm-net'
-gitlab_pages_hosts:
-  - 'zuh0.com'
-  - 'pages.zuh0.com'
-  - 'zuh0.pages.zuh0.com'
-networks:
-  - 'sadm-net'
-containers:
-  traefik:
-    name: 'traefik'
-    image: 'docker.io/traefik:latest'
-  files:
-    name: 'files'
-    image: 'docker.io/dutchcoders/transfer.sh:latest'
-  paste:
-    name: 'paste'
-    image: 'docker.io/privatebin/nginx-fpm-alpine:latest'
-  gitlab:
-    name: 'gitlab'
-    image: 'docker.io/gitlab/gitlab-ee:latest'
-  gitlab_runner:
-    name: 'gitlab-runner'
-    image: 'docker.io/gitlab/gitlab-runner:latest'
-  wireguard:
-    name: 'wireguard'
-    image: 'registry.zuh0.com/zuh0/wg-container'
-  jupyterhub:
-    name: 'jupyterhub'
-    image: 'registry.zuh0.com/zuh0/jupyterhub-container'
-base_dir: '/sadm'
-generated_dir: '/generated'
-persistent_dir: '/persistent'
-volatile_dir: '/volatile'
-volumes:
-  prefix: '/volume'
-  default:
-    owner: 'root'
-    group: 'root'
-    mode: '0700'
+services:
+  network: 'sadm-net'
+  volumes:
+    src:
+      base: '/sadm'  # Base directory to store volumes on host
+      generated: '/generated'  # Directory in `src_base` for generated files
+      persistent: '/persistent'  # Directory in `src_base` for persisent files
+      volatile: '/volatile'  # Directory in `src_base` for volatile files
 
-  generated:
-    # For Traefik
-    - path: '/traefik/static'
-    - path: '/traefik/dynamic'
+    dest:
+      base: '/volume'  # Mountpoint for volumes in containers
+    
+  # Here is a list of containers which will run our services
+  containers:
 
-  persistent:
-    # For Traefik
-    - path: '/traefik/data'
+    # Traefik reverse proxy
+    traefik:
+      name: 'traefik'
+      image: 'docker.io/traefik:latest'
+      volumes:
+        static:
+          type: 'generated'
+          path: '/traefik/static'
+        dynamic:
+          type: 'generated'
+          path: '/traefik/dynamic'
+        data:
+          type: 'persistent'
+          path: '/traefik/data'
 
-    # For Gitlab server
-    - path: '/gitlab/config'
-      mode: '0775'
-    - path: '/gitlab/log'
-      mode: '0755'
-    - path: '/gitlab/data'
-      mode: '0755'
+    # File sharing service
+    files:
+      name: 'files'
+      image: 'docker.io/dutchcoders/transfer.sh:latest'
+      volumes:
+        data:
+          type: 'volatile'
+          path: '/files/data'
 
-    # For Gitlab runner
-    - path: '/gitlab-runner/config'
+    # Privatebin paste service
+    paste:
+      name: 'paste'
+      image: 'docker.io/privatebin/nginx-fpm-alpine:latest'
+      volumes:
+        data:
+          type: 'volatile'
+          path: '/paste/data'
+          owner: '65534'
+          group: '82'
 
-    # For JupyterHub
-    - path: '/jupyterhub/data'
-      mode: '0777'
-      owner: '1000'
-      group: '100'
+    # GitLab service with GitLab Pages and container registry
+    gitlab:
+      name: 'gitlab'
+      image: 'docker.io/gitlab/gitlab-ee:latest'
+      volumes:
+        config:
+          type: 'persistent'
+          path: '/gitlab/config'
+          mode: '0775'
+        data:
+          type: 'persistent'
+          path: '/gitlab/data'
+          mode: '0755'
+        log:
+          type: 'persistent'
+          path: '/gitlab/log'
+          mode: '0755'
 
-    # For Wireguard
-    - path: '/wireguard/data'
+      pages:
+        hosts:
+          - 'zuh0.com'
+          - 'pages.zuh0.com'
+          - 'zuh0.pages.zuh0.com'
 
-  volatile:
-    # For transfer.sh
-    - path: '/files/data'
+    # GitLab runner for CI jobs
+    gitlab_runner:
+      name: 'gitlab-runner'
+      image: 'docker.io/gitlab/gitlab-runner:latest'
+      volumes:
+        config:
+          type: 'persistent'
+          path: '/gitlab-runner/config'
 
-    # For Privatebin
-    - path: '/paste/data'
-      owner: '65534'
-      group: '82'
+    # Wireguard VPN
+    wireguard:
+      name: 'wireguard'
+      image: 'registry.zuh0.com/zuh0/wg-container'
+      volumes:
+        config:
+          type: 'generated'
+          path: '/wireguard/config'
+
+    # JupyterHub service
+    jupyterhub:
+      name: 'jupyterhub'
+      image: 'registry.zuh0.com/zuh0/jupyterhub-container'
+      volumes:
+        data:
+          type: 'persistent'
+          path: '/jupyterhub/data'
+
+      admin: 'zuh0'
+      notebook_image: 'registry.zuh0.com/zuh0/jupyter-notebook-image'
+      users:
+        - 'zuh0'
+        - 'katynkae'

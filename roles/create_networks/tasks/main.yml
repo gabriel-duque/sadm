@@ -4,6 +4,5 @@
   community.general.docker_network:
     attachable: true
     scope: local
-    name: '{{ item }}'
+    name: '{{ services.network }}'
     appends: true
-  loop: '{{ networks }}'
