@@ -108,7 +108,7 @@ services:
     # Wireguard VPN
     wireguard:
       name: 'wireguard'
-      image: 'registry.zuh0.com/zuh0/wg-container'
+      image: 'docker.io/zuh0/wg-container'
       volumes:
         config:
           type: 'generated'
@@ -117,14 +117,14 @@ services:
     # JupyterHub service
     jupyterhub:
       name: 'jupyterhub'
-      image: 'registry.zuh0.com/zuh0/jupyterhub-container'
+      image: 'docker.io/zuh0/jupyterhub-container'
       volumes:
         data:
           type: 'persistent'
           path: '/jupyterhub/data'
 
       admin: 'zuh0'
-      notebook_image: 'registry.zuh0.com/zuh0/jupyter-notebook-image'
+      notebook_image: 'docker.io/zuh0/jupyter-notebook-image'
       users:
         - 'zuh0'
         - 'katynkae'
