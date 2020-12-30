@@ -1,0 +1,103 @@
+---
+
+- name: Generate Synapse's dynamic Traefik configuration
+  template:
+    src: 'synapse.toml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}/synapse.toml"
+    mode: '0444'
+
+- name: Copy Synapse's configuration files
+  copy:
+    src: '{{ item.name }}'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.synapse.volumes.data.path }}\
+           /{{ item.name }}"
+    owner: '991'
+    group: '991'
+    mode: '0600'
+  loop:
+    - {name: 'homeserver.yaml'}
+    - {name: 'zuh0.com.log.config'}
+    - {name: 'zuh0.com.signing.key'}
+
+- name: Start Synapse container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    env:
+      TZ: 'Europe/Paris'
+    hostname: '{{ services.containers.synapse.name }}'
+    image: '{{ services.containers.synapse.image }}'
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.synapse.volumes.data.path }}"
+        target: '/data'
+        read_only: false
+    name: '{{ services.containers.synapse.name }}'
+    networks:
+      - name: '{{ services.network }}'
+        aliases:
+          - '{{ services.containers.synapse.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped
+
+- name: Create directory for federation files
+  file:
+    path: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.synapse_federation.volumes.data.path }}\
+           /.well-known/matrix"
+    state: 'directory'
+
+- name: Generate federation files
+  template:
+    src: '{{ item }}.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.synapse_federation.volumes.data.path }}\
+           /.well-known/matrix/{{ item }}"
+    owner: '101'
+    group: '101'
+    mode: '0444'
+  loop:
+    - 'client'
+    - 'server'
+
+- name: Generate Synapse federation's dynamic Traefik configuration
+  template:
+    src: 'synapse-federation.toml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /synapse-federation.toml"
+    mode: '0444'
+
+- name: Start Synapse federation container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ services.containers.synapse_federation.name }}'
+    image: '{{ services.containers.synapse_federation.image }}'
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+                 {{ services.containers.synapse_federation.volumes.data.path }}"
+        target: '/usr/share/nginx/html'
+        read_only: false
+    name: '{{ services.containers.synapse_federation.name }}'
+    networks:
+      - name: '{{ services.network }}'
+        aliases:
+          - '{{ services.containers.synapse_federation.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped

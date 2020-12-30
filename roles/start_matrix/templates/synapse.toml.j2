@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[http]
+  [http.services]
+    [[http.services.synapse.loadBalancer.servers]]
+      url = "http://{{ services.containers.synapse.name }}:8008/"
+  [http.routers]
+    [http.routers.synapse_https]
+      rule = "Host(`synapse.{{ setup.tld }}`)"
+      entryPoints = "https"
+      service = "synapse"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.synapse_https.tls]
+        certResolver = "sadm_tlschallenge"

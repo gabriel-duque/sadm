@@ -1,0 +1,17 @@
+{{ ansible_managed | comment }}
+
+[http]
+  [http.services]
+    [[http.services.synapse_federation.loadBalancer.servers]]
+      url = "http://{{ services.containers.synapse_federation.name }}:80/"
+  [http.routers]
+    [http.routers.synapse_federation_https]
+      rule = "Host(`{{ setup.tld }}`) && PathPrefix(`/.well-known/matrix/`)"
+      entryPoints = "https"
+      service = "synapse_federation"
+      priority = 500
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.synapse_federation_https.tls]
+        certResolver = "sadm_tlschallenge"

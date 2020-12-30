@@ -1,2 +1,6 @@
 .vault_passwd filter=git-crypt diff=git-crypt
 vaulted_vars/** filter=git-crypt diff=git-crypt
+
+roles/start_matrix/files/*homeserver.yaml* filter=git-crypt diff=git-crypt
+roles/start_matrix/files/*.log.config* filter=git-crypt diff=git-crypt
+roles/start_matrix/files/*.signing.key* filter=git-crypt diff=git-crypt
