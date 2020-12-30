@@ -9,7 +9,7 @@
            /gitlab.toml"
     mode: '0444'
 
-- name: Start Gitlab server container
+- name: Start GitLab server container
   community.general.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
@@ -73,7 +73,7 @@
     purge_networks: true
     restart_policy: unless-stopped
 
-- name: Start Gitlab runner container
+- name: Start GitLab runner container
   community.general.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true

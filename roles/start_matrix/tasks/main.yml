@@ -55,6 +55,9 @@
            {{ services.containers.synapse_federation.volumes.data.path }}\
            /.well-known/matrix"
     state: 'directory'
+    owner: '101'
+    group: '101'
+    mode: '0700'
 
 - name: Generate federation files
   template:

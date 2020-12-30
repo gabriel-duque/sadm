@@ -1,6 +1,6 @@
 ---
 
-- name: Generate Wireguard's dynamic configuration for Traefik
+- name: Generate WireGuard's dynamic configuration for Traefik
   template:
     src: 'wireguard.toml.j2'
     dest: "{{ services.volumes.src.base }}\
@@ -9,7 +9,7 @@
            /wireguard.toml"
     mode: '0444'
 
-- name: Install Wireguard and QRencode on host
+- name: Install WireGuard and QRencode on host
   apt:
     autoclean: true
     autoremove: true
@@ -26,7 +26,7 @@
            {{ services.containers.wireguard.volumes.config.path }}\
            /wg-sadm.conf"
     mode: '0400'
-  notify: Restart Wireguard container
+  notify: Restart WireGuard container
 
 - name: Generate client configs
   template:
@@ -39,9 +39,9 @@
   loop: '{{ secrets.wireguard.peers }}'
   loop_control:
     label: '{{ item.name }}'
-  notify: Restart Wireguard container
+  notify: Restart WireGuard container
 
-- name: Start Wireguard container
+- name: Start WireGuard container
   community.general.docker_container:
     capabilities:
       - net_admin
