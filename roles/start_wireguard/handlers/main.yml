@@ -1,6 +1,6 @@
 ---
 
-- name: Restart Wireguard container
+- name: Restart WireGuard container
   community.general.docker_container:
     name: '{{ services.containers.wireguard.name }}'
     state: started
