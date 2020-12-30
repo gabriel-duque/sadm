@@ -1,0 +1,6 @@
+---
+
+extends: default
+
+ignore: |
+  roles/start_matrix/files/homeserver.yaml
