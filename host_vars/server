@@ -34,6 +34,13 @@ services:
 
     dest:
       base: '/volume'  # Mountpoint for volumes in containers
+
+  log:
+    driver: 'json-file'
+    options:
+      compress: 'true'
+      max-size: '10m'
+      max-file: '3'
     
   # Here is a list of containers which will run our services
   containers:
@@ -97,6 +104,9 @@ services:
           - 'www.zuh0.com'
           - 'pages.zuh0.com'
           - 'zuh0.pages.zuh0.com'
+          - 'bandang0.pages.zuh0.com'
+          - 'josephine-et-raphael.com'
+          - 'www.josephine-et-raphael.com'
 
     # GitLab runner for CI jobs
     gitlab_runner:
@@ -130,6 +140,7 @@ services:
       users:
         - 'zuh0'
         - 'katynkae'
+        - 'bandang0'
 
     # Matrix homeserver
     synapse:
@@ -152,3 +163,8 @@ services:
           path: '/synapse-federation/data'
           owner: '101'
           group: '101'
+
+    # Element web ui for matrix
+    element:
+      name: 'element'
+      image: 'docker.io/vectorim/element-web'

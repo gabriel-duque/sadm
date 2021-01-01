@@ -44,6 +44,8 @@
         gitlab_pages['inplace_chroot'] = true
     hostname: '{{ services.containers.gitlab.name }}'
     image: '{{ services.containers.gitlab.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
     mounts:
       - type: bind
         source: "{{ services.volumes.src.base }}\
@@ -81,6 +83,8 @@
       TZ: 'Europe/Paris'
     hostname: '{{ services.containers.gitlab_runner.name }}'
     image: '{{ services.containers.gitlab_runner.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
     mounts:
       - type: bind
         source: "{{ services.volumes.src.base }}\

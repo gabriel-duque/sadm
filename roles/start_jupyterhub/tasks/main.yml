@@ -39,6 +39,8 @@
                       {{ services.containers.jupyterhub.volumes.data.path }}"
     hostname: '{{ services.containers.jupyterhub.name }}'
     image: '{{ services.containers.jupyterhub.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
     mounts:
       - type: bind
         source: '/var/run/docker.sock'
