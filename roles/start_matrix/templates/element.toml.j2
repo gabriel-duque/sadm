@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[http]
+  [http.services]
+    [[http.services.element.loadBalancer.servers]]
+      url = "http://{{ services.containers.element.name }}:80/"
+  [http.routers]
+    [http.routers.element_https]
+      rule = "Host(`matrix.{{ setup.tld }}`, `element.{{ setup.tld }}`)"
+      entryPoints = "https"
+      service = "element"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.element_https.tls]
+        certResolver = "sadm_tlschallenge"
