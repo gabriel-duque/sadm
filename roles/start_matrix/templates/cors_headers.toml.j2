@@ -1,0 +1,8 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.cors_headers]
+      [http.middlewares.cors_headers.headers]
+        accessControlAllowMethods= ["GET", "OPTIONS"]
+        accessControlAllowOrigin = "*"
+        accessControlMaxAge = 100
+        addVaryHeader = true

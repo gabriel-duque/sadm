@@ -75,6 +75,15 @@
     - 'client'
     - 'server'
 
+- name: Generate Synapse federation's CORS headers configuration
+  template:
+    src: 'cors_headers.toml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /cors_headers.toml"
+    mode: '0444'
+
 - name: Generate Synapse federation's dynamic Traefik configuration
   template:
     src: 'synapse-federation.toml.j2'

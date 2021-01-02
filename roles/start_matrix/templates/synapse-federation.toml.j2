@@ -11,7 +11,8 @@
       service = "synapse_federation"
       priority = 500
       middlewares = [
-        "security_headers"
+        "security_headers",
+        "cors_headers"
       ]
       [http.routers.synapse_federation_https.tls]
         certResolver = "sadm_tlschallenge"
