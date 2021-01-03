@@ -1,0 +1,13 @@
+id: facebook
+as_token: '{{ secrets.matrix.facebook_bridge.as_token }}'
+hs_token: '{{ secrets.matrix.facebook_bridge.hs_token }}'
+namespaces:
+    users:
+    - exclusive: true
+      regex: '@facebook_.*:{{ setup.tld | regex_escape }}'
+    - exclusive: true
+      regex: '@facebookbot:{{ setup.tld | regex_escape }}'
+    aliases: []
+url: 'http://{{ services.containers.facebook_bridge.name }}:29319'
+sender_localpart: '{{ secrets.matrix.facebook_bridge.sender_localpart }}'
+rate_limited: false

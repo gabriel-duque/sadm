@@ -1,0 +1,15 @@
+id: telegram
+as_token: '{{ secrets.matrix.telegram_bridge.as_token }}'
+hs_token: '{{ secrets.matrix.telegram_bridge.hs_token }}'
+namespaces:
+    users:
+    - exclusive: true
+      regex: '@telegram_.*:{{ setup.tld | regex_escape }}'
+    - exclusive: true
+      regex: '@telegrambot:{{ setup.tld | regex_escape }}'
+    aliases:
+    - exclusive: true
+      regex: '\#telegram_.*:{{ setup.tld | regex_escape }}'
+url: 'http://{{ services.containers.telegram_bridge.name }}:29317'
+sender_localpart: '{{ secrets.matrix.telegram_bridge.sender_localpart }}'
+rate_limited: false

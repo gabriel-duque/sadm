@@ -1,0 +1,12 @@
+id: whatsapp
+url: http://{{ services.containers.whatsapp_bridge.name }}:29318
+as_token: '{{ secrets.matrix.whatsapp_bridge.as_token }}'
+hs_token: '{{ secrets.matrix.whatsapp_bridge.hs_token }}'
+sender_localpart: whatsappbot
+rate_limited: false
+namespaces:
+  users:
+  - regex: '^@whatsapp_[0-9]+:{{ setup.tld | regex_escape }}$'
+    exclusive: true
+  - regex: '^@whatsappbot:{{ setup.tld | regex_escape }}$'
+    exclusive: true

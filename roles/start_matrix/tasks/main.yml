@@ -30,6 +30,57 @@
     - {name: '{{ setup.tld }}.log.config'}
     - {name: '{{ setup.tld }}.signing.key'}
 
+- name: Generate Facebook registration file
+  template:
+    src: 'facebook_registration.yaml.j2'
+    dest: '{{ item }}'
+    owner: '991'
+    group: '991'
+    mode: '0600'
+  loop:
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.generated }}\
+       {{ services.containers.synapse.volumes.facebook_registration.path }}\
+           /registration.yaml"
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.persistent }}\
+       {{ services.containers.facebook_bridge.volumes.data.path }}\
+           /registration.yaml"
+
+- name: Generate Telegram registration file
+  template:
+    src: 'telegram_registration.yaml.j2'
+    dest: '{{ item }}'
+    owner: '991'
+    group: '991'
+    mode: '0600'
+  loop:
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.generated }}\
+       {{ services.containers.synapse.volumes.telegram_registration.path }}\
+           /registration.yaml"
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.persistent }}\
+       {{ services.containers.telegram_bridge.volumes.data.path }}\
+           /registration.yaml"
+
+- name: Generate WhatsApp registration file
+  template:
+    src: 'whatsapp_registration.yaml.j2'
+    dest: '{{ item }}'
+    owner: '991'
+    group: '991'
+    mode: '0600'
+  loop:
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.generated }}\
+       {{ services.containers.synapse.volumes.whatsapp_registration.path }}\
+           /registration.yaml"
+    - "{{ services.volumes.src.base }}\
+       {{ services.volumes.src.persistent }}\
+       {{ services.containers.whatsapp_bridge.volumes.data.path }}\
+           /registration.yaml"
+
 - name: Start Synapse container
   community.general.docker_container:
     container_default_behavior: 'no_defaults'
@@ -47,6 +98,24 @@
                  {{ services.containers.synapse.volumes.data.path }}"
         target: '/data'
         read_only: false
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+          {{ services.containers.synapse.volumes.facebook_registration.path }}"
+        target: '/registration/facebook'
+        read_only: true
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+          {{ services.containers.synapse.volumes.telegram_registration.path }}"
+        target: '/registration/telegram'
+        read_only: true
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+          {{ services.containers.synapse.volumes.whatsapp_registration.path }}"
+        target: '/registration/whatsapp'
+        read_only: true
     name: '{{ services.containers.synapse.name }}'
     networks:
       - name: '{{ services.network }}'
@@ -133,6 +202,14 @@
            {{ services.containers.traefik.volumes.dynamic.path }}/element.toml"
     mode: '0444'
 
+- name: Generate Element's configuration
+  template:
+    src: 'element-config.json.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.generated }}\
+           {{ services.containers.element.volumes.config.path }}/config.json"
+    mode: '0444'
+
 - name: Start Element web container
   community.general.docker_container:
     container_default_behavior: 'no_defaults'
@@ -150,3 +227,119 @@
     pull: true
     purge_networks: true
     restart_policy: unless-stopped
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.generated }}\
+                 {{ services.containers.element.volumes.config.path }}\
+                 /config.json"
+        target: '/app/config.json'
+        read_only: true
+
+- name: Generate Facebook bridge's configuration
+  template:
+    src: 'facebook_config.yaml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.facebook_bridge.volumes.data.path }}\
+           /config.yaml"
+    owner: '1337'
+    group: '1337'
+    mode: '0644'
+
+- name: Start Facebook bridge container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ services.containers.facebook_bridge.name }}'
+    image: '{{ services.containers.facebook_bridge.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
+    name: '{{ services.containers.facebook_bridge.name }}'
+    networks:
+      - name: '{{ services.network }}'
+        aliases:
+          - '{{ services.containers.facebook_bridge.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.facebook_bridge.volumes.data.path }}"
+        target: '/data'
+        read_only: false
+
+- name: Generate Telegram bridge's configuration
+  template:
+    src: 'telegram_config.yaml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.telegram_bridge.volumes.data.path }}\
+           /config.yaml"
+    owner: '1337'
+    group: '1337'
+    mode: '0644'
+
+- name: Start Telegram bridge container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ services.containers.telegram_bridge.name }}'
+    image: '{{ services.containers.telegram_bridge.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
+    name: '{{ services.containers.telegram_bridge.name }}'
+    networks:
+      - name: '{{ services.network }}'
+        aliases:
+          - '{{ services.containers.telegram_bridge.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.telegram_bridge.volumes.data.path }}"
+        target: '/data'
+        read_only: false
+
+- name: Generate WhatsApp bridge's configuration
+  template:
+    src: 'whatsapp_config.yaml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.whatsapp_bridge.volumes.data.path }}\
+           /config.yaml"
+    owner: '1337'
+    group: '1337'
+    mode: '0644'
+
+- name: Start WhatsApp bridge container
+  community.general.docker_container:
+    container_default_behavior: 'no_defaults'
+    detach: true
+    hostname: '{{ services.containers.whatsapp_bridge.name }}'
+    image: '{{ services.containers.whatsapp_bridge.image }}'
+    log_driver: '{{ services.log.driver }}'
+    log_options: '{{ services.log.options }}'
+    name: '{{ services.containers.whatsapp_bridge.name }}'
+    networks:
+      - name: '{{ services.network }}'
+        aliases:
+          - '{{ services.containers.whatsapp_bridge.name }}'
+    networks_cli_compatible: false
+    pull: true
+    purge_networks: true
+    restart_policy: unless-stopped
+    mounts:
+      - type: bind
+        source: "{{ services.volumes.src.base }}\
+                 {{ services.volumes.src.persistent }}\
+                 {{ services.containers.whatsapp_bridge.volumes.data.path }}"
+        target: '/data'
+        read_only: false

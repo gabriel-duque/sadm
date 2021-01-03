@@ -104,6 +104,7 @@ services:
           - 'www.zuh0.com'
           - 'pages.zuh0.com'
           - 'zuh0.pages.zuh0.com'
+          - 'archlinux.zuh0.com'
           - 'bandang0.pages.zuh0.com'
           - 'josephine-et-raphael.com'
           - 'www.josephine-et-raphael.com'
@@ -152,6 +153,23 @@ services:
           path: '/synapse/data'
           owner: '991'
           group: '991'
+        facebook_registration:
+          type: 'generated'
+          path: '/registration/facebook'
+          owner: '991'
+          group: '991'
+        telegram_registration:
+          type: 'generated'
+          path: '/registration/telegram'
+          owner: '991'
+          group: '991'
+        whatsapp_registration:
+          type: 'generated'
+          path: '/registration/whatsapp'
+          owner: '991'
+          group: '991'
+
+      admin: 'zuh0'
 
     # Matrix homeserver federation files
     synapse_federation:
@@ -168,3 +186,41 @@ services:
     element:
       name: 'element'
       image: 'docker.io/vectorim/element-web'
+      volumes:
+        config:
+          type: 'generated'
+          path: '/element/config'
+          mode: '0444'
+
+    # Bridge to use Messenger over matrix
+    facebook_bridge:
+      name: 'facebook-bridge'
+      image: 'dock.mau.dev/tulir/mautrix-facebook:latest'
+      volumes:
+        data:
+          type: 'persistent'
+          path: '/facebook-bridge/data'
+          owner: '1337'
+          group: '1337'
+
+    # Bridge to use Telegram over matrix
+    telegram_bridge:
+      name: 'telegram-bridge'
+      image: 'dock.mau.dev/tulir/mautrix-telegram:latest'
+      volumes:
+        data:
+          type: 'persistent'
+          path: '/telegram-bridge/data'
+          owner: '1337'
+          group: '1337'
+
+    # Bridge to use Whatsapp over matrix
+    whatsapp_bridge:
+      name: 'whatsapp-bridge'
+      image: 'dock.mau.dev/tulir/mautrix-whatsapp:latest'
+      volumes:
+        data:
+          type: 'persistent'
+          path: '/whatsapp-bridge/data'
+          owner: '1337'
+          group: '1337'
