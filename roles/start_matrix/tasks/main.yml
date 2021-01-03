@@ -8,6 +8,14 @@
            {{ services.containers.traefik.volumes.dynamic.path }}/synapse.toml"
     mode: '0444'
 
+- name: Generate Synapse's homeserver configuration
+  template:
+    src: 'homeserver.yaml.j2'
+    dest: "{{ services.volumes.src.base }}\
+           {{ services.volumes.src.persistent }}\
+           {{ services.containers.synapse.volumes.data.path }}/homeserver.yaml"
+    mode: '0444'
+
 - name: Copy Synapse's configuration files
   copy:
     src: '{{ item.name }}'
@@ -19,9 +27,8 @@
     group: '991'
     mode: '0600'
   loop:
-    - {name: 'homeserver.yaml'}
-    - {name: 'zuh0.com.log.config'}
-    - {name: 'zuh0.com.signing.key'}
+    - {name: '{{ setup.tld }}.log.config'}
+    - {name: '{{ setup.tld }}.signing.key'}
 
 - name: Start Synapse container
   community.general.docker_container:
