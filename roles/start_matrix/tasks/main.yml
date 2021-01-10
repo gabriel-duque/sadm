@@ -210,7 +210,8 @@
     src: 'matrix_bot.toml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.generated }}\
-           {{ services.containers.traefik.volumes.dynamic.path }}/matrix_bot.toml"
+           {{ services.containers.traefik.volumes.dynamic.path }}\
+           /matrix_bot.toml"
     mode: '0444'
 
 - name: Start Matrix bot container
