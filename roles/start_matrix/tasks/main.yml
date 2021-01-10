@@ -32,7 +32,7 @@
 
 - name: Generate Facebook registration file
   template:
-    src: 'facebook_registration.yaml.j2'
+    src: 'facebook-registration.yaml.j2'
     dest: '{{ item.name }}'
     owner: '{{ item.owner }}'
     group: '{{ item.group }}'
@@ -53,7 +53,7 @@
 
 - name: Generate Telegram registration file
   template:
-    src: 'telegram_registration.yaml.j2'
+    src: 'telegram-registration.yaml.j2'
     dest: '{{ item.name }}'
     owner: '{{ item.owner }}'
     group: '{{ item.group }}'
@@ -74,7 +74,7 @@
 
 - name: Generate WhatsApp registration file
   template:
-    src: 'whatsapp_registration.yaml.j2'
+    src: 'whatsapp-registration.yaml.j2'
     dest: '{{ item.name }}'
     owner: '{{ item.owner }}'
     group: '{{ item.group }}'
@@ -165,11 +165,11 @@
 
 - name: Generate Synapse federation's CORS headers configuration
   template:
-    src: 'cors_headers.toml.j2'
+    src: 'cors-headers.toml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.generated }}\
            {{ services.containers.traefik.volumes.dynamic.path }}\
-           /cors_headers.toml"
+           /cors-headers.toml"
     mode: '0444'
 
 - name: Generate Synapse federation's dynamic Traefik configuration
@@ -208,7 +208,7 @@
 
 - name: Generate Matrix bot's configuration
   template:
-    src: 'bot_config.yaml.j2'
+    src: 'bot-config.yaml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.persistent }}\
            {{ services.containers.matrix_bot.volumes.data.path }}\
@@ -219,11 +219,11 @@
 
 - name: Generate Matrix bot's dynamic Traefik configuration
   template:
-    src: 'matrix_bot.toml.j2'
+    src: 'bot.toml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.generated }}\
            {{ services.containers.traefik.volumes.dynamic.path }}\
-           /matrix_bot.toml"
+           /bot.toml"
     mode: '0444'
 
 - name: Start Matrix bot container
@@ -295,7 +295,7 @@
 
 - name: Generate Facebook bridge's configuration
   template:
-    src: 'facebook_config.yaml.j2'
+    src: 'facebook-config.yaml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.persistent }}\
            {{ services.containers.facebook_bridge.volumes.data.path }}\
@@ -331,7 +331,7 @@
 
 - name: Generate Telegram bridge's configuration
   template:
-    src: 'telegram_config.yaml.j2'
+    src: 'telegram-config.yaml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.persistent }}\
            {{ services.containers.telegram_bridge.volumes.data.path }}\
@@ -367,7 +367,7 @@
 
 - name: Generate WhatsApp bridge's configuration
   template:
-    src: 'whatsapp_config.yaml.j2'
+    src: 'whatsapp-config.yaml.j2'
     dest: "{{ services.volumes.src.base }}\
            {{ services.volumes.src.persistent }}\
            {{ services.containers.whatsapp_bridge.volumes.data.path }}\
