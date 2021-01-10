@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+[http]
+  [http.services]
+    [[http.services.matrix_bot.loadBalancer.servers]]
+      url = "http://{{ services.containers.matrix_bot.name }}:29316/"
+  [http.routers]
+    [http.routers.matrix_bot_https]
+      rule = "Host(`bot.{{ setup.tld }}`)"
+      entryPoints = "https"
+      service = "matrix_bot"
+      middlewares = [
+        "security_headers"
+      ]
+      [http.routers.matrix_bot_https.tls]
+        certResolver = "sadm_tlschallenge"

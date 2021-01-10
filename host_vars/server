@@ -182,6 +182,17 @@ services:
           owner: '101'
           group: '101'
 
+    # Maubot instance
+    matrix_bot:
+      name: 'matrix-bot'
+      image: 'dock.mau.dev/maubot/maubot:latest'
+      volumes:
+        data:
+          type: 'persistent'
+          path: '/matrix-bot/data'
+          owner: '1337'
+          group: '1337'
+
     # Element web ui for matrix
     element:
       name: 'element'
