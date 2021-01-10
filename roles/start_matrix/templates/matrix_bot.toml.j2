@@ -4,13 +4,19 @@
   [http.services]
     [[http.services.matrix_bot.loadBalancer.servers]]
       url = "http://{{ services.containers.matrix_bot.name }}:29316/"
+  [http.middlewares]
+    [http.middlewares.bot_redirect_to_login]
+      [http.middlewares.bot_redirect_to_login.redirectregex]
+        regex = "^https://([^/]*)/$"
+        replacement = "https://${1}/_matrix/maubot/#/login"
   [http.routers]
     [http.routers.matrix_bot_https]
       rule = "Host(`bot.{{ setup.tld }}`)"
       entryPoints = "https"
       service = "matrix_bot"
       middlewares = [
-        "security_headers"
+        "security_headers",
+        "bot_redirect_to_login"
       ]
       [http.routers.matrix_bot_https.tls]
         certResolver = "sadm_tlschallenge"
