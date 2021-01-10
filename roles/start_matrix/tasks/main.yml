@@ -33,53 +33,65 @@
 - name: Generate Facebook registration file
   template:
     src: 'facebook_registration.yaml.j2'
-    dest: '{{ item }}'
-    owner: '991'
-    group: '991'
+    dest: '{{ item.name }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
     mode: '0600'
   loop:
-    - "{{ services.volumes.src.base }}\
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.generated }}\
        {{ services.containers.synapse.volumes.facebook_registration.path }}\
-           /registration.yaml"
-    - "{{ services.volumes.src.base }}\
+       /registration.yaml",
+       owner: '991',
+       group: '991'}
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.persistent }}\
        {{ services.containers.facebook_bridge.volumes.data.path }}\
-           /registration.yaml"
+       /registration.yaml",
+       owner: '1337',
+       group: '1337'}
 
 - name: Generate Telegram registration file
   template:
     src: 'telegram_registration.yaml.j2'
-    dest: '{{ item }}'
-    owner: '991'
-    group: '991'
+    dest: '{{ item.name }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
     mode: '0600'
   loop:
-    - "{{ services.volumes.src.base }}\
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.generated }}\
        {{ services.containers.synapse.volumes.telegram_registration.path }}\
-           /registration.yaml"
-    - "{{ services.volumes.src.base }}\
+       /registration.yaml",
+       owner: '991',
+       group: '991'}
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.persistent }}\
        {{ services.containers.telegram_bridge.volumes.data.path }}\
-           /registration.yaml"
+       /registration.yaml",
+       owner: '1337',
+       group: '1337'}
 
 - name: Generate WhatsApp registration file
   template:
     src: 'whatsapp_registration.yaml.j2'
-    dest: '{{ item }}'
-    owner: '991'
-    group: '991'
+    dest: '{{ item.name }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
     mode: '0600'
   loop:
-    - "{{ services.volumes.src.base }}\
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.generated }}\
        {{ services.containers.synapse.volumes.whatsapp_registration.path }}\
-           /registration.yaml"
-    - "{{ services.volumes.src.base }}\
+       /registration.yaml",
+       owner: '991',
+       group: '991'}
+    - {name: "{{ services.volumes.src.base }}\
        {{ services.volumes.src.persistent }}\
        {{ services.containers.whatsapp_bridge.volumes.data.path }}\
-           /registration.yaml"
+       /registration.yaml",
+       owner: '1337',
+       group: '1337'}
 
 - name: Start Synapse container
   community.general.docker_container:
