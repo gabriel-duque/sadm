@@ -30,7 +30,7 @@
     - {name: 'tls.toml'}
 
 - name: Start Traefik container
-  community.general.docker_container:
+  community.docker.docker_container:
     cap_drop:
       - all
     capabilities:

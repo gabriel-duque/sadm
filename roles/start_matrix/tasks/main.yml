@@ -94,7 +94,7 @@
        group: '1337'}
 
 - name: Start Synapse container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     env:
@@ -182,7 +182,7 @@
     mode: '0444'
 
 - name: Start Synapse federation container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.synapse_federation.name }}'
@@ -227,7 +227,7 @@
     mode: '0444'
 
 - name: Start Matrix bot container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.matrix_bot.name }}'
@@ -268,7 +268,7 @@
     mode: '0444'
 
 - name: Start Element web container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.element.name }}'
@@ -305,7 +305,7 @@
     mode: '0644'
 
 - name: Start Facebook bridge container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.facebook_bridge.name }}'
@@ -341,7 +341,7 @@
     mode: '0644'
 
 - name: Start Telegram bridge container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.telegram_bridge.name }}'
@@ -377,7 +377,7 @@
     mode: '0644'
 
 - name: Start WhatsApp bridge container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     hostname: '{{ services.containers.whatsapp_bridge.name }}'

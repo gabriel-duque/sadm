@@ -1,7 +1,7 @@
 ---
 
 - name: Create Docker networks
-  community.general.docker_network:
+  community.docker.docker_network:
     attachable: true
     scope: local
     name: '{{ services.network }}'

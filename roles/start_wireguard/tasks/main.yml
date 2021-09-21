@@ -42,7 +42,7 @@
   notify: Restart WireGuard container
 
 - name: Start WireGuard container
-  community.general.docker_container:
+  community.docker.docker_container:
     capabilities:
       - net_admin
       - sys_module

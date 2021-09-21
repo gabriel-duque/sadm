@@ -83,7 +83,7 @@ services:
     # GitLab service with GitLab Pages and container registry
     gitlab:
       name: 'gitlab'
-      image: 'docker.io/gitlab/gitlab-ee:latest'
+      image: 'docker.io/gitlab/gitlab-ee:13.12.11-ee.0'
       volumes:
         config:
           type: 'persistent'

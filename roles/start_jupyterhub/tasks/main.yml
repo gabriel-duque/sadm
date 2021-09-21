@@ -21,7 +21,7 @@
   loop: '{{ services.containers.jupyterhub.users }}'
 
 - name: Start JupyterHub container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     env:

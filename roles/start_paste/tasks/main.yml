@@ -10,7 +10,7 @@
     mode: '0444'
 
 - name: Start privatebin container
-  community.general.docker_container:
+  community.docker.docker_container:
     cap_drop:
       - all
     container_default_behavior: 'no_defaults'

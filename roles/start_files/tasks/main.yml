@@ -10,7 +10,7 @@
     mode: '0444'
 
 - name: Start transfer.sh container
-  community.general.docker_container:
+  community.docker.docker_container:
     cap_drop:
       - all
     command:

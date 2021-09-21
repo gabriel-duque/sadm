@@ -10,7 +10,7 @@
     mode: '0444'
 
 - name: Start GitLab server container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     env:
@@ -76,7 +76,7 @@
     restart_policy: unless-stopped
 
 - name: Start GitLab runner container
-  community.general.docker_container:
+  community.docker.docker_container:
     container_default_behavior: 'no_defaults'
     detach: true
     env:
